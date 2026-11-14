@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { useAppStore } from '../store/appStore';
-import type { ChatMessage, Chunk, ConfidenceLevel } from '../types';
+import type { ChatMessage, Chunk, ConfidenceLevel, Language } from '../types';
 
 type LoadingStage = 'prepare' | 'answer' | 'localize' | null;
 
@@ -14,6 +14,7 @@ export function useChat() {
     addMessage,
     updateMessage,
     language,
+    setLanguage,
     jurisdiction,
     classificationState,
     setClassificationState,
@@ -99,6 +100,13 @@ export function useChat() {
         setIsSampleCorpus(prepareData.sampleOnly);
         setLastRetrievedChunks(prepareData.retrievedChunks);
 
+        // Auto-sync store language if the query script was auto-detected as non-English
+        const detectedLang = prepareData.detectedLanguage as Language;
+        const supportedLangs: Language[] = ['en', 'hi', 'ta', 'bn', 'mr', 'te'];
+        if (detectedLang && supportedLangs.includes(detectedLang) && detectedLang !== language) {
+          setLanguage(detectedLang);
+        }
+
         // If clarification needed, ask and exit
         if (prepareData.needsClarification && prepareData.pendingQuestion) {
           updateMessage(assistantMsgId, {
@@ -152,14 +160,20 @@ export function useChat() {
 
         let finalAnswer = answerData.verifiedAnswer;
 
-        if (language !== 'en') {
+        // Use detected language from prepare (handles auto-detection from query script),
+        // but fall back to the store language setting.
+        const targetLang = (prepareData.detectedLanguage !== 'en'
+          ? prepareData.detectedLanguage
+          : language) as string;
+
+        if (targetLang !== 'en') {
           const localizeRes = await fetch('/api/localize', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               sessionId: prepareData.sessionId,
               answer: answerData.verifiedAnswer,
-              targetLanguage: language,
+              targetLanguage: targetLang,
             }),
           });
 
@@ -212,6 +226,7 @@ export function useChat() {
       setClassificationState,
       setIsSampleCorpus,
       setLastRetrievedChunks,
+      setLanguage,
     ],
   );
 

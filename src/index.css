@@ -95,4 +95,17 @@
   .skeleton {
     @apply bg-slate-200 dark:bg-slate-800 rounded animate-pulse;
   }
+
+  /* Institutional card – used by ChatPanel, MessageBubble, ClassifierSidebar */
+  .institutional-card {
+    @apply bg-white dark:bg-slate-900 rounded-xl
+           shadow-[0_1px_3px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)]
+           border border-slate-200/90 dark:border-slate-800;
+  }
+}
+
+@layer utilities {
+  /* Hide scrollbar but keep functionality */
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 }
