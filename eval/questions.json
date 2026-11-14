@@ -1,0 +1,403 @@
+[
+  {
+    "id": "Q001",
+    "question": "Can a classical Ayurvedic formulation like Triphala be patented in India?",
+    "language": "en",
+    "jurisdiction": "india",
+    "expected_sources": ["patents-act-sec3p", "patents-traditional-knowledge"],
+    "should_abstain": false,
+    "reference_answer": "Classical Ayurvedic formulations like Triphala are explicitly excluded from patentability under Section 3(p) of the Patents Act, 1970, which bars patents on traditional knowledge. Such formulations are well-documented in the TKDL and constitute prior art.",
+    "ip_type": "patent"
+  },
+  {
+    "id": "Q002",
+    "question": "What is the ABS compliance process for a new herbal product using Indian biological resources?",
+    "language": "en",
+    "jurisdiction": "india",
+    "expected_sources": ["biodiversity-act-2002", "bd-amendment-2023"],
+    "should_abstain": false,
+    "reference_answer": "Under the Biological Diversity Act, 2002 (amended 2023), commercial use of Indian biological resources requires prior approval from the NBA or prior intimation to the SBB. An ABS agreement ensuring equitable benefit sharing must be signed.",
+    "ip_type": "biodiversity"
+  },
+  {
+    "id": "Q003",
+    "question": "पेटेंट के लिए आयुर्वेदिक दवाओं में धारा 3(p) क्या कहती है?",
+    "language": "hi",
+    "jurisdiction": "india",
+    "expected_sources": ["patents-act-sec3p"],
+    "should_abstain": false,
+    "reference_answer": "पेटेंट अधिनियम 1970 की धारा 3(p) के अनुसार, पारंपरिक ज्ञान पर आधारित आविष्कार पेटेंट योग्य नहीं हैं। यह आयुर्वेदिक, यूनानी और सिद्ध फॉर्मूलेशन को सीधे प्रभावित करता है।",
+    "ip_type": "patent"
+  },
+  {
+    "id": "Q004",
+    "question": "How does the WIPO GRATK Treaty 2024 affect Ayurveda patent applications internationally?",
+    "language": "en",
+    "jurisdiction": "international",
+    "expected_sources": ["wipo-gratk-2024"],
+    "should_abstain": false,
+    "reference_answer": "The WIPO Treaty on Genetic Resources and Associated Traditional Knowledge (2024) requires patent applicants to disclose the country of origin of genetic resources and associated traditional knowledge. This strengthens India's position in preventing misappropriation of Ayurvedic traditional knowledge.",
+    "ip_type": "wipo-gratk"
+  },
+  {
+    "id": "Q005",
+    "question": "What GI tags exist for Ayurvedic products and how can a new one be obtained?",
+    "language": "en",
+    "jurisdiction": "india",
+    "expected_sources": ["gi-act-1999"],
+    "should_abstain": false,
+    "reference_answer": "Several Ayurvedic products have GI tags, including Mysore Sandal Soap, Manipur Black Rice, and various regional preparations. A new GI application must be filed with the GI Registry under the Geographical Indications of Goods Act, 1999.",
+    "ip_type": "gi"
+  },
+  {
+    "id": "Q006",
+    "question": "What is the difference between classical and patent/proprietary Ayurvedic drugs for regulatory purposes?",
+    "language": "en",
+    "jurisdiction": "india",
+    "expected_sources": ["drugs-cosmetics-act-classical", "drugs-cosmetics-first-schedule"],
+    "should_abstain": false,
+    "reference_answer": "Classical drugs are listed in the First Schedule of the D&C Act and are based on classical texts. They follow Schedule E prescriptions. Patent/proprietary drugs are not in classical texts and require clinical safety data under the new drug approval process.",
+    "ip_type": "drugs-regulatory"
+  },
+  {
+    "id": "Q007",
+    "question": "ஆயுர்வேத தயாரிப்புகளுக்கான நாகோயா நெறிமுறை என்ன?",
+    "language": "ta",
+    "jurisdiction": "international",
+    "expected_sources": ["nagoya-protocol-2010"],
+    "should_abstain": false,
+    "reference_answer": "நாகோயா நெறிமுறை (2010) உயிரியல் வளங்களுக்கான முன் அறிவித்த சம்மதம் (PIC) மற்றும் பரஸ்பர ஒப்புக்கொண்ட விதிமுறைகளை (MAT) கோருகிறது. ஆயுர்வேத தயாரிப்புகளை ஏற்றுமதி செய்வோர் இதை கடைபிடிக்க வேண்டும்.",
+    "ip_type": "cbd-nagoya"
+  },
+  {
+    "id": "Q008",
+    "question": "Can Ayurvedic plant extracts be protected under PPVFRA?",
+    "language": "en",
+    "jurisdiction": "india",
+    "expected_sources": ["ppvfra-2001"],
+    "should_abstain": false,
+    "reference_answer": "Yes, novel plant varieties used in Ayurvedic preparations can be registered under PPVFRA 2001 if they meet the criteria of novelty, distinctiveness, uniformity, and stability (NDUS). Farmers' and breeders' rights are protected under this Act.",
+    "ip_type": "ppvfra"
+  },
+  {
+    "id": "Q009",
+    "question": "আয়ুর্বেদিক পণ্যের জন্য ট্রেডমার্ক নিবন্ধন কীভাবে করবেন?",
+    "language": "bn",
+    "jurisdiction": "india",
+    "expected_sources": ["trademarks-act-1999"],
+    "should_abstain": false,
+    "reference_answer": "আয়ুর্বেদিক পণ্যের ব্র্যান্ড নাম ট্রেড মার্কস অ্যাক্ট, 1999 এর অধীনে নিবন্ধন করা যায়। আবেদন IP India-র ট্রেড মার্কস রেজিস্ট্রিতে অনলাইনে দাখিল করতে হবে।",
+    "ip_type": "trademark"
+  },
+  {
+    "id": "Q010",
+    "question": "What is the TKDL and how does it prevent biopiracy of Ayurvedic knowledge?",
+    "language": "en",
+    "jurisdiction": "both",
+    "expected_sources": ["tkdl-overview"],
+    "should_abstain": false,
+    "reference_answer": "TKDL (Traditional Knowledge Digital Library) is a database of 300,000+ traditional medicine formulations in digitized, searchable format. It is provided to international patent offices (USPTO, EPO, JPO) under access agreements to serve as prior art, preventing grant of patents on traditional knowledge.",
+    "ip_type": "biodiversity"
+  },
+  {
+    "id": "Q011",
+    "question": "How is a phytopharmaceutical drug regulated differently from a classical Ayurvedic drug?",
+    "language": "en",
+    "jurisdiction": "india",
+    "expected_sources": ["drugs-cosmetics-schedule-ya"],
+    "should_abstain": false,
+    "reference_answer": "Phytopharmaceuticals are regulated under Schedule Y-A of the D&C Rules, requiring safety and efficacy studies similar to allopathic new drugs but adapted for botanical products. Classical drugs follow the First Schedule and need pharmacopoeial compliance only.",
+    "ip_type": "drugs-regulatory"
+  },
+  {
+    "id": "Q012",
+    "question": "What is the patent term for an Ayurvedic pharmaceutical product in India?",
+    "language": "en",
+    "jurisdiction": "india",
+    "expected_sources": ["patents-act-term"],
+    "should_abstain": false,
+    "reference_answer": "If a patent is granted for an Ayurvedic pharmaceutical product (which must not be based on traditional knowledge per Section 3(p)), the term is 20 years from the date of filing under Section 53 of the Patents Act, 1970.",
+    "ip_type": "patent"
+  },
+  {
+    "id": "Q013",
+    "question": "Can copyright protect an Ayurvedic formulation text?",
+    "language": "en",
+    "jurisdiction": "india",
+    "expected_sources": ["copyright-act-1957"],
+    "should_abstain": false,
+    "reference_answer": "Copyright can protect the original expression in an Ayurvedic text (book, monograph, clinical notes) but not the formulation itself or its therapeutic use. The Copyright Act, 1957 protects literary works for 60 years post the author's death.",
+    "ip_type": "copyright"
+  },
+  {
+    "id": "Q014",
+    "question": "What are the requirements to register an Ayurvedic cosmetic in India?",
+    "language": "en",
+    "jurisdiction": "india",
+    "expected_sources": ["drugs-cosmetics-chapter-iva"],
+    "should_abstain": false,
+    "reference_answer": "Ayurvedic cosmetics are regulated under Chapter IV-A of the D&C Act and must comply with standards in Schedule Q. Import of cosmetics requires registration under Rule 21(2). Domestic manufacture needs a license from the State Drugs Authority.",
+    "ip_type": "drugs-regulatory"
+  },
+  {
+    "id": "Q015",
+    "question": "How do TRIPS flexibilities apply to Ayurvedic medicines for compulsory licensing?",
+    "language": "en",
+    "jurisdiction": "both",
+    "expected_sources": ["trips-agreement-27", "trips-compulsory-license"],
+    "should_abstain": false,
+    "reference_answer": "TRIPS Article 31 allows compulsory licensing under specific conditions. India's Patents Act Section 84 permits compulsory licensing if a patented drug is not reasonably available to the public at a reasonable price. For Ayurvedic drugs, Section 3(p) often renders them non-patentable, making compulsory licensing irrelevant.",
+    "ip_type": "trips"
+  },
+  {
+    "id": "Q016",
+    "question": "What international filing options are available for an Ayurvedic product patent?",
+    "language": "en",
+    "jurisdiction": "international",
+    "expected_sources": ["pct-overview"],
+    "should_abstain": false,
+    "reference_answer": "Patent applications can be filed internationally via the PCT (Patent Cooperation Treaty) system through WIPO, designating multiple countries with a single application. India is a PCT member.",
+    "ip_type": "pct-madrid-hague-budapest"
+  },
+  {
+    "id": "Q017",
+    "question": "What penalties exist for biopiracy of Indian traditional knowledge?",
+    "language": "en",
+    "jurisdiction": "india",
+    "expected_sources": ["biodiversity-act-penalties"],
+    "should_abstain": false,
+    "reference_answer": "Under the Biological Diversity Act, 2002, unauthorized access to biological resources can attract penalties up to Rs. 10 lakh for companies. The 2023 Amendment introduced stricter compounding mechanisms.",
+    "ip_type": "biodiversity"
+  },
+  {
+    "id": "Q018",
+    "question": "मराठी: आयुर्वेदिक उत्पादनासाठी भौगोलिक संकेत (GI) कसे मिळवायचे?",
+    "language": "mr",
+    "jurisdiction": "india",
+    "expected_sources": ["gi-act-1999"],
+    "should_abstain": false,
+    "reference_answer": "भौगोलिक संकेत नोंदणी भौगोलिक संकेत माल (नोंदणी व संरक्षण) अधिनियम, 1999 अंतर्गत GI रजिस्ट्रीकडे अर्ज करून मिळवता येते.",
+    "ip_type": "gi"
+  },
+  {
+    "id": "Q019",
+    "question": "What is the difference between ABS under CBD and the Nagoya Protocol?",
+    "language": "en",
+    "jurisdiction": "international",
+    "expected_sources": ["cbd-article8j", "nagoya-protocol-2010"],
+    "should_abstain": false,
+    "reference_answer": "CBD (1992) established the framework for ABS with general principles. The Nagoya Protocol (2010) is a supplementary agreement that provides more specific obligations on PIC, MAT, and benefit-sharing, with the ABS Clearing-House for transparency.",
+    "ip_type": "cbd-nagoya"
+  },
+  {
+    "id": "Q020",
+    "question": "Can a novel Ayurvedic extraction process be patented under Indian law?",
+    "language": "en",
+    "jurisdiction": "india",
+    "expected_sources": ["patents-act-sec3p", "patents-process-claims"],
+    "should_abstain": false,
+    "reference_answer": "A novel extraction or manufacturing process for an Ayurvedic ingredient can potentially be patented if it meets novelty, inventive step, and industrial applicability criteria, provided the process itself is novel and not merely the application of a known traditional knowledge.",
+    "ip_type": "patent"
+  },
+  {
+    "id": "Q021",
+    "question": "What is the DMR(OA) Act and how does it affect Ayurvedic drug regulation?",
+    "language": "en",
+    "jurisdiction": "india",
+    "expected_sources": ["dmroa-act"],
+    "should_abstain": false,
+    "reference_answer": "The Drugs and Magic Remedies (Objectionable Advertisements) Act, 1954 prohibits misleading advertisements claiming to cure certain diseases. Ayurvedic companies must ensure their product claims comply with this Act and do not make prohibited therapeutic claims.",
+    "ip_type": "drugs-regulatory"
+  },
+  {
+    "id": "Q022",
+    "question": "Is cryptocurrency investment advice related to Ayurveda?",
+    "language": "en",
+    "jurisdiction": "india",
+    "expected_sources": [],
+    "should_abstain": true,
+    "reference_answer": "",
+    "ip_type": "general"
+  },
+  {
+    "id": "Q023",
+    "question": "What are FSSAI regulations for Ayurveda Aahar (nutraceuticals)?",
+    "language": "en",
+    "jurisdiction": "india",
+    "expected_sources": ["fssai-ayurveda-aahar"],
+    "should_abstain": false,
+    "reference_answer": "FSSAI regulates Ayurveda Aahar under the Food Safety and Standards (Health Supplements, Nutraceuticals, Food for Special Dietary Use, Food for Special Medical Purpose, Functional Food and Novel Food) Regulations, 2022.",
+    "ip_type": "drugs-regulatory"
+  },
+  {
+    "id": "Q024",
+    "question": "What is the Budapest Treaty relevant to Ayurvedic biologics?",
+    "language": "en",
+    "jurisdiction": "international",
+    "expected_sources": ["budapest-treaty"],
+    "should_abstain": false,
+    "reference_answer": "The Budapest Treaty on the International Recognition of the Deposit of Microorganisms for the Purposes of Patent Procedure allows depositing biological material at an International Depositary Authority. This is relevant for Ayurvedic products involving microorganisms or fermentation processes.",
+    "ip_type": "pct-madrid-hague-budapest"
+  },
+  {
+    "id": "Q025",
+    "question": "ఆయుర్వేద ఔషధాల కోసం అంతర్జాతీయ ట్రేడ్‌మార్క్ నమోదు ఎలా చేయాలి?",
+    "language": "te",
+    "jurisdiction": "international",
+    "expected_sources": ["madrid-system"],
+    "should_abstain": false,
+    "reference_answer": "మాడ్రిడ్ సిస్టమ్ ద్వారా ఒకే దరఖాస్తుతో అనేక దేశాలలో ట్రేడ్‌మార్క్ నమోదు చేయవచ్చు. భారతదేశం మాడ్రిడ్ ప్రొటోకాల్‌లో సభ్యురాలు.",
+    "ip_type": "pct-madrid-hague-budapest"
+  },
+  {
+    "id": "Q026",
+    "question": "How does traditional knowledge documentation protect against patent misappropriation?",
+    "language": "en",
+    "jurisdiction": "both",
+    "expected_sources": ["tkdl-overview", "patents-act-sec3p"],
+    "should_abstain": false,
+    "reference_answer": "Documented traditional knowledge serves as prior art under patent law. TKDL databases are accessible to major patent offices, ensuring examiners find prior art and reject applications based on traditional knowledge per Section 3(p) in India and similar provisions internationally.",
+    "ip_type": "biodiversity"
+  },
+  {
+    "id": "Q027",
+    "question": "What is the role of NBA in Ayurvedic product commercialization?",
+    "language": "en",
+    "jurisdiction": "india",
+    "expected_sources": ["biodiversity-act-2002", "bd-amendment-2023"],
+    "should_abstain": false,
+    "reference_answer": "The National Biodiversity Authority (NBA) regulates access to biological resources for commercial purposes. Companies must obtain NBA approval before commercializing products derived from Indian biological resources under the BD Act 2002.",
+    "ip_type": "biodiversity"
+  },
+  {
+    "id": "Q028",
+    "question": "Can an Ayurvedic hospital's brand name be protected as a trademark?",
+    "language": "en",
+    "jurisdiction": "india",
+    "expected_sources": ["trademarks-act-1999"],
+    "should_abstain": false,
+    "reference_answer": "Yes, service marks (including hospital/clinic brand names) can be registered under the Trade Marks Act, 1999 in Class 44 (medical services). The mark must be distinctive and not descriptive of the services.",
+    "ip_type": "trademark"
+  },
+  {
+    "id": "Q029",
+    "question": "Tell me how to make Ashwagandha extract.",
+    "language": "en",
+    "jurisdiction": "india",
+    "expected_sources": [],
+    "should_abstain": true,
+    "reference_answer": "",
+    "ip_type": "general"
+  },
+  {
+    "id": "Q030",
+    "question": "What are the key provisions of TRIPS Article 27.3(b) for plant and animal inventions relevant to Ayurveda?",
+    "language": "en",
+    "jurisdiction": "international",
+    "expected_sources": ["trips-agreement-27"],
+    "should_abstain": false,
+    "reference_answer": "TRIPS Article 27.3(b) allows WTO members to exclude plants and animals from patentability. India excludes plants under PPVFRA 2001 and Section 3(j) of the Patents Act. However, microorganisms and non-biological processes must be patentable.",
+    "ip_type": "trips"
+  },
+  {
+    "id": "Q031",
+    "question": "What is the examination process for an Ayurvedic GI application in India?",
+    "language": "en",
+    "jurisdiction": "india",
+    "expected_sources": ["gi-act-1999"],
+    "should_abstain": false,
+    "reference_answer": "A GI application is examined by the GI Registry for compliance with the GI Act 1999. The examiner checks the applicant's standing, geographical origin, and quality/reputation nexus. If accepted, the GI is published in the GI Journal for opposition.",
+    "ip_type": "gi"
+  },
+  {
+    "id": "Q032",
+    "question": "How should benefit-sharing be documented for a community providing traditional Ayurvedic knowledge?",
+    "language": "en",
+    "jurisdiction": "india",
+    "expected_sources": ["biodiversity-act-2002", "bd-amendment-2023"],
+    "should_abstain": false,
+    "reference_answer": "Benefit-sharing must be documented in an ABS agreement approved by the NBA, specifying monetary and non-monetary benefits for the local community or knowledge holders, consistent with the BD Act and 2024 Rules.",
+    "ip_type": "biodiversity"
+  },
+  {
+    "id": "Q033",
+    "question": "What IP protections are available for a novel Ayurvedic packaging design?",
+    "language": "en",
+    "jurisdiction": "india",
+    "expected_sources": ["designs-act-2000"],
+    "should_abstain": false,
+    "reference_answer": "Novel packaging designs can be protected under the Designs Act, 2000, which covers the shape, configuration, pattern, or ornamentation of an article. The design must be new and original, and registration is valid for 10 years (renewable once).",
+    "ip_type": "design"
+  },
+  {
+    "id": "Q034",
+    "question": "Who is eligible to file a plant variety application under PPVFRA for an Ayurvedic herb?",
+    "language": "en",
+    "jurisdiction": "india",
+    "expected_sources": ["ppvfra-2001"],
+    "should_abstain": false,
+    "reference_answer": "Under PPVFRA 2001, breeders, farmers, and communities can file for plant variety protection. For Ayurvedic herbs, a plant breeder who develops a new variety through breeding or discovery can apply. Farmers who develop or conserve a variety also have protection rights.",
+    "ip_type": "ppvfra"
+  },
+  {
+    "id": "Q035",
+    "question": "What must an Ayurvedic company do before exporting products to EU under Nagoya Protocol?",
+    "language": "en",
+    "jurisdiction": "international",
+    "expected_sources": ["nagoya-protocol-2010"],
+    "should_abstain": false,
+    "reference_answer": "Before exporting to the EU, companies must obtain Prior Informed Consent (PIC) from India as the provider country, establish Mutually Agreed Terms (MAT), and obtain an Internationally Recognized Certificate of Compliance (IRCC) published in the ABS Clearing-House.",
+    "ip_type": "cbd-nagoya"
+  },
+  {
+    "id": "Q036",
+    "question": "Can trade secrets protect an Ayurvedic formulation?",
+    "language": "en",
+    "jurisdiction": "india",
+    "expected_sources": [],
+    "should_abstain": false,
+    "reference_answer": "While India does not have a standalone trade secrets law, confidential business information including formulations can be protected under common law (breach of confidence), NDA agreements, and potentially the IT Act. However, once a product is on the market, reverse engineering may expose formulations.",
+    "ip_type": "general"
+  },
+  {
+    "id": "Q037",
+    "question": "Tell me the stock price of Dabur India Limited.",
+    "language": "en",
+    "jurisdiction": "india",
+    "expected_sources": [],
+    "should_abstain": true,
+    "reference_answer": "",
+    "ip_type": "general"
+  },
+  {
+    "id": "Q038",
+    "question": "What is the Hague Agreement relevant to Ayurvedic product designs?",
+    "language": "en",
+    "jurisdiction": "international",
+    "expected_sources": ["hague-system"],
+    "should_abstain": false,
+    "reference_answer": "The Hague Agreement provides an international system for registering industrial designs across multiple countries through a single WIPO application. For Ayurvedic product packaging and device designs, this enables cost-effective multi-country design protection.",
+    "ip_type": "pct-madrid-hague-budapest"
+  },
+  {
+    "id": "Q039",
+    "question": "What labeling requirements apply to Ayurvedic medicines under Schedule T of D&C Rules?",
+    "language": "en",
+    "jurisdiction": "india",
+    "expected_sources": ["drugs-cosmetics-schedule-t"],
+    "should_abstain": false,
+    "reference_answer": "Schedule T of the Drugs & Cosmetics Rules specifies Good Manufacturing Practices for Ayurvedic medicines. Labeling must include brand name, generic name, composition, dose, manufacture and expiry dates, batch number, manufacturer details, and appropriate warnings.",
+    "ip_type": "drugs-regulatory"
+  },
+  {
+    "id": "Q040",
+    "question": "How does the 2023 Biological Diversity Amendment affect existing ABS agreements?",
+    "language": "en",
+    "jurisdiction": "india",
+    "expected_sources": ["bd-amendment-2023"],
+    "should_abstain": false,
+    "reference_answer": "The BD (Amendment) Act 2023 streamlined the ABS framework by removing certain domestic Indian companies from needing NBA approval (now only prior intimation to SBB needed), while retaining full NBA oversight for foreign entities and international collaborations.",
+    "ip_type": "biodiversity"
+  }
+]
+

@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "allowImportingTsExtensions": false,
+    "noEmit": false,
+    "outDir": "./dist-scripts",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
+  },
+  "include": ["scripts", "netlify/functions", "src/lib/sarvam.ts", "src/types"]
+}
