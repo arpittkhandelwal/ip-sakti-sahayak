@@ -77,7 +77,7 @@ export const useAppStore = create<AppState>((set) => ({
   sessionId: null,
   setSessionId: (sessionId) => set({ sessionId }),
 
-  isDarkMode: window.matchMedia('(prefers-color-scheme: dark)').matches,
+  isDarkMode: false,
   toggleDarkMode: () =>
     set((s) => {
       const next = !s.isDarkMode;
