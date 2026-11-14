@@ -111,15 +111,25 @@ export const handler: Handler = async (event: HandlerEvent) => {
   const sid = sessionId ?? `sess-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 
   // 1. Detect language
-  const detectedLanguage = await detectLanguage(query);
+  let detectedLanguage: Language = 'en';
+  try {
+    detectedLanguage = await detectLanguage(query);
+  } catch {
+    detectedLanguage = 'en';
+  }
 
   // 2. Translate to English if needed
   let translatedQuery = query;
   if (detectedLanguage !== 'en') {
-    translatedQuery = await translate(query, {
-      source_language_code: LANGUAGE_CODES_SARVAM[detectedLanguage],
-      target_language_code: 'en-IN',
-    });
+    try {
+      translatedQuery = await translate(query, {
+        source_language_code: LANGUAGE_CODES_SARVAM[detectedLanguage],
+        target_language_code: 'en-IN',
+      });
+    } catch {
+      console.warn('[prepare] Translate API failed, keeping original query');
+      translatedQuery = query;
+    }
   }
 
   // 3. Classification state machine

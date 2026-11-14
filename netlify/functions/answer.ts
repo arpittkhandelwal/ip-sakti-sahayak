@@ -172,16 +172,20 @@ export const handler: Handler = async (event: HandlerEvent) => {
   if (shouldAbstain) {
     isAbstention = true;
     const authorityPointers = getAuthorityPointers(classificationState);
-    rawAnswer = await chatCompletion(
-      [
-        { role: 'system', content: ABSTENTION_SYSTEM },
-        {
-          role: 'user',
-          content: `Query: "${originalQuery}"\n\nRelevant authorities:\n${authorityPointers}\n\nProvide a helpful abstention response.`,
-        },
-      ],
-      { temperature: 0.2, max_tokens: 400 },
-    );
+    try {
+      rawAnswer = await chatCompletion(
+        [
+          { role: 'system', content: ABSTENTION_SYSTEM },
+          {
+            role: 'user',
+            content: `Query: "${originalQuery}"\n\nRelevant authorities:\n${authorityPointers}\n\nProvide a helpful abstention response.`,
+          },
+        ],
+        { temperature: 0.2, max_tokens: 400 },
+      );
+    } catch {
+      rawAnswer = `I cannot fully answer this query from the indexed corpus. For authoritative legal guidance, please consult the relevant registry or authority:\n\n${authorityPointers}\n\n⚖️ This is legal information, not legal advice. Consult a qualified IP attorney.`;
+    }
   } else {
     // Optional LLM rerank of top 8 -> top 4
     let chunksForAnswer = retrievedChunks;
@@ -193,13 +197,18 @@ export const handler: Handler = async (event: HandlerEvent) => {
     const categoryGuidance = getCategoryGuidance(classificationState.productCategory);
     const prompt = buildAnswerPrompt(translatedQuery, chunksForAnswer, classificationState, categoryGuidance);
 
-    rawAnswer = await chatCompletion(
-      [
-        { role: 'system', content: ANSWER_SYSTEM_PROMPT },
-        { role: 'user', content: prompt },
-      ],
-      { temperature: 0.1, max_tokens: 1200 },
-    );
+    try {
+      rawAnswer = await chatCompletion(
+        [
+          { role: 'system', content: ANSWER_SYSTEM_PROMPT },
+          { role: 'user', content: prompt },
+        ],
+        { temperature: 0.1, max_tokens: 1200 },
+      );
+    } catch (err) {
+      console.warn('[answer] Sarvam chat completion failed, using grounded chunk synthesis:', (err as Error).message);
+      rawAnswer = generateGroundedSummary(translatedQuery, chunksForAnswer, classificationState);
+    }
   }
 
   // Verify citations
@@ -274,4 +283,29 @@ Return only the top ${topN} most relevant indices.`;
   } catch {
     return chunks.slice(0, topN);
   }
+}
+
+function generateGroundedSummary(
+  query: string,
+  chunks: Chunk[],
+  classification: ClassificationState,
+): string {
+  const citations = chunks.slice(0, 3).map((c) => `[${c.id}]`).join(', ');
+  const chunkSummaries = chunks.slice(0, 3).map((c) => {
+    return `### ${c.title} [${c.id}]\n**Act/Treaty:** ${c.act_or_treaty} (${c.section_or_article})\n**Jurisdiction:** ${c.jurisdiction.toUpperCase()}\n\n${c.content}\n\n*Source: [${c.source_url}](${c.source_url})*`;
+  }).join('\n\n---\n\n');
+
+  return `## Legal Guidance for: "${query}"
+
+**Classification:** ${classification.productCategory.toUpperCase()} | ${classification.ipType.toUpperCase()} | ${classification.jurisdiction.toUpperCase()}
+
+### Statutory Findings
+
+${chunkSummaries}
+
+---
+
+**Sources Used:** ${citations}
+
+⚖️ This is legal information, not legal advice. Consult a qualified IP attorney for your specific situation.`;
 }

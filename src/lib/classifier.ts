@@ -87,11 +87,49 @@ Extract the classification. If any field is "unknown" or "general" and we have f
     },
   ];
   
-  const response = await chatCompletion(messages, {
-    response_format: { type: 'json_object' },
-    temperature: 0,
-    max_tokens: 512,
-  });
+  let response = '';
+  try {
+    response = await chatCompletion(messages, {
+      response_format: { type: 'json_object' },
+      temperature: 0,
+      max_tokens: 512,
+    });
+  } catch (err) {
+    console.warn('[classifier] Sarvam call failed, falling back to rule-based classification:', (err as Error).message);
+    const lower = query.toLowerCase();
+    let ipType: IPType = 'general';
+    if (lower.includes('patent') || lower.includes('3(p)') || lower.includes('inven') || lower.includes('triphala')) ipType = 'patent';
+    else if (lower.includes('biodiversity') || lower.includes('abs') || lower.includes('nba') || lower.includes('tkdl') || lower.includes('biological')) ipType = 'biodiversity';
+    else if (lower.includes('gi') || lower.includes('geographical')) ipType = 'gi';
+    else if (lower.includes('trademark') || lower.includes('brand')) ipType = 'trademark';
+    else if (lower.includes('wipo') || lower.includes('gratk')) ipType = 'wipo-gratk';
+    else if (lower.includes('nagoya') || lower.includes('cbd')) ipType = 'cbd-nagoya';
+    else if (lower.includes('cosmetic') || lower.includes('drug') || lower.includes('aahar') || lower.includes('nutraceutical')) ipType = 'drugs-regulatory';
+
+    let productCategory: ProductCategory = 'unknown';
+    if (lower.includes('classical') || lower.includes('generic') || lower.includes('triphala') || lower.includes('first schedule')) productCategory = 'classical';
+    else if (lower.includes('proprietary') || lower.includes('patent drug')) productCategory = 'patent-proprietary';
+    else if (lower.includes('phytopharmaceutical')) productCategory = 'phytopharmaceutical';
+    else if (lower.includes('aahar') || lower.includes('nutraceutical')) productCategory = 'ayurveda-aahar';
+    else if (lower.includes('cosmetic')) productCategory = 'cosmetic';
+
+    let jurisdiction: Jurisdiction = 'india';
+    if (lower.includes('international') || lower.includes('wipo') || lower.includes('nagoya') || lower.includes('trips')) {
+      jurisdiction = lower.includes('india') ? 'both' : 'international';
+    }
+
+    return {
+      updatedState: {
+        ...currentState,
+        step: currentState.step + 1,
+        productCategory: productCategory !== 'unknown' ? productCategory : currentState.productCategory,
+        jurisdiction,
+        ipType: ipType !== 'general' ? ipType : currentState.ipType,
+        isClassified: true,
+      },
+      needsClarification: false,
+    };
+  }
   
   let parsed: {
     productCategory?: ProductCategory;
