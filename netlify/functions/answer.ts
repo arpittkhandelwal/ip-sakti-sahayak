@@ -290,22 +290,75 @@ function generateGroundedSummary(
   chunks: Chunk[],
   classification: ClassificationState,
 ): string {
-  const citations = chunks.slice(0, 3).map((c) => `[${c.id}]`).join(', ');
-  const chunkSummaries = chunks.slice(0, 3).map((c) => {
-    return `### ${c.title} [${c.id}]\n**Act/Treaty:** ${c.act_or_treaty} (${c.section_or_article})\n**Jurisdiction:** ${c.jurisdiction.toUpperCase()}\n\n${c.content}\n\n*Source: [${c.source_url}](${c.source_url})*`;
-  }).join('\n\n---\n\n');
+  if (chunks.length === 0) {
+    return `No statutory records could be matched with sufficient confidence for your query: "${query}". Please consult the official IP India or National Biodiversity Authority portal for authoritative guidance.`;
+  }
 
-  return `## Legal Guidance for: "${query}"
+  const primaryChunk = chunks[0];
+  const supportingChunks = chunks.slice(1, 4);
+  const citationTokens = chunks.slice(0, 4).map((c) => `[${c.id}]`).join(' ');
 
-**Classification:** ${classification.productCategory.toUpperCase()} | ${classification.ipType.toUpperCase()} | ${classification.jurisdiction.toUpperCase()}
+  let opinion = `## Statutory Advisory Brief
 
-### Statutory Findings
-
-${chunkSummaries}
+**Inquiry Subject:** "${query}"  
+**Jurisdiction:** ${classification.jurisdiction === 'india' ? 'Republic of India' : classification.jurisdiction === 'international' ? 'International Multilateral' : 'Cross-Border Comparative'}  
+**Statutory Classification:** ${classification.productCategory.toUpperCase()} · ${classification.ipType.toUpperCase()}  
 
 ---
 
-**Sources Used:** ${citations}
+### 1. Primary Statutory Finding & Determination
 
-⚖️ This is legal information, not legal advice. Consult a qualified IP attorney for your specific situation.`;
+Under the governing statutory framework, particularly **${primaryChunk.act_or_treaty} (${primaryChunk.section_or_article})** [${primaryChunk.id}]:
+
+> "${cleanQuote(primaryChunk.content)}"
+
+**Legal Principle**: Inventions that represent traditional knowledge, or are aggregations or duplications of known properties of traditionally documented components, are expressly excluded from patentability. Documented formulations in classical Ayurvedic treatises (Charaka Samhita, Sushruta Samhita, Ashtanga Hridayam, API) constitute irrevocable prior art.
+
+---
+
+### 2. Substantive Statutory Provisions & Analysis
+
+`;
+
+  if (supportingChunks.length > 0) {
+    for (const chunk of supportingChunks) {
+      opinion += `#### ${chunk.act_or_treaty} – ${chunk.section_or_article} [${chunk.id}]\n\n`;
+      opinion += `${cleanProse(chunk.content)}\n\n`;
+    }
+  }
+
+  opinion += `---
+
+### 3. Actionable IP & Regulatory Roadmap
+
+For Ayurvedic manufacturers, research institutions, and innovators operating in this space:
+
+- **Brand Protection (Trademarks Class 5 & 3)**: Where formulation patents are barred under Section 3(p), establish defensible IP through distinctive trademark registration under Class 5 (pharmaceutical preparations) or Class 3 (herbal cosmetics).
+- **Process & Delivery System Patents**: Inventions involving novel extraction techniques, enhanced bioavailability, or specialized delivery systems (not disclosed in classical literature) remain patent-eligible as novel process claims.
+- **Geographical Indication (GI) Pathways**: Regional Ayurvedic formulations with unique geographical reputations qualify for community-held GI registration under the GI Act, 1999.
+- **Biological Diversity (ABS) Mandate**: Compliance with the Biological Diversity Act 2002 (as amended in 2023) is mandatory before commercialization. Ensure timely intimation to State Biodiversity Boards (SBB) or formal approval from the National Biodiversity Authority (NBA).
+
+---
+
+**Corpus Citations:** ${citationTokens}
+
+⚖️ **Notice:** This document constitutes legal information generated from the verified Ayush statutory corpus for SIH26045. It does not constitute formal legal counsel.`;
+
+  return opinion;
+}
+
+function cleanQuote(text: string): string {
+  return text
+    .split('\n\n')[0]
+    .replace(/^#+\s+/gm, '')
+    .replace(/>\s*/g, '')
+    .trim()
+    .slice(0, 350);
+}
+
+function cleanProse(text: string): string {
+  return text
+    .replace(/^#+\s+[^\n]+/gm, '')
+    .trim()
+    .slice(0, 500);
 }

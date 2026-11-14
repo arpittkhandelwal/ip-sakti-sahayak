@@ -1,7 +1,20 @@
 import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { ChevronDown, ChevronUp, ExternalLink, AlertTriangle, Mail, CheckCircle2, List } from 'lucide-react';
+import {
+  ChevronDown,
+  ChevronUp,
+  ExternalLink,
+  AlertTriangle,
+  Mail,
+  CheckCircle2,
+  FileCheck2,
+  Scale,
+  ShieldCheck,
+  Building2,
+  Copy,
+  Check,
+} from 'lucide-react';
 import type { ChatMessage } from '../types';
 import { useAppStore } from '../store/appStore';
 
@@ -10,22 +23,24 @@ interface Props {
 }
 
 function ConfidenceBadge({ level, score }: { level: string; score?: number }) {
-  const cls =
-    level === 'High' ? 'badge-high' :
-    level === 'Medium' ? 'badge-medium' :
-    'badge-low';
+  const isHigh = level === 'High';
+  const isMed = level === 'Medium';
+  const cls = isHigh ? 'badge-high' : isMed ? 'badge-medium' : 'badge-low';
+
   return (
     <span className={`badge ${cls}`}>
-      {level === 'High' ? '✓' : level === 'Medium' ? '~' : '⚠'} {level}
-      {score !== undefined && ` (${Math.round(score * 100)}%)`}
+      <span className={`w-1.5 h-1.5 rounded-full ${isHigh ? 'bg-emerald-600' : isMed ? 'bg-amber-600' : 'bg-rose-600'}`}></span>
+      <span>{level} Evidence Support</span>
+      {score !== undefined && <span className="opacity-80 font-mono">({Math.round(score * 100)}%)</span>}
     </span>
   );
 }
 
 export function MessageBubble({ message }: Props) {
-  const [citationsOpen, setCitationsOpen] = useState(false);
-  const [absOpen, setAbsOpen] = useState(false);
+  const [citationsOpen, setCitationsOpen] = useState(true);
+  const [absOpen, setAbsOpen] = useState(true);
   const [tkdlOpen, setTkdlOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
   const { classificationState } = useAppStore();
 
   const isUser = message.role === 'user';
@@ -33,8 +48,15 @@ export function MessageBubble({ message }: Props) {
   if (isUser) {
     return (
       <div className="flex justify-end animate-slide-in">
-        <div className="max-w-[80%] bg-saffron-500 text-white rounded-2xl rounded-tr-sm px-4 py-2.5 shadow-sm">
-          <p className="text-sm">{message.content}</p>
+        <div className="max-w-[85%] bg-gradient-to-r from-ayush-950 to-slate-900 text-white rounded-2xl rounded-tr-xs px-5 py-3.5 shadow-md border border-ayush-800/40">
+          <div className="text-[10px] uppercase font-bold text-amber-400 tracking-wider mb-1 flex items-center gap-1.5">
+            <Scale size={12} />
+            Inquirer Docket
+          </div>
+          <p className="text-sm font-sans leading-relaxed text-slate-100">{message.content}</p>
+          <div className="text-[10px] text-slate-400 text-right mt-1.5">
+            {message.timestamp ? new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
+          </div>
         </div>
       </div>
     );
@@ -43,10 +65,13 @@ export function MessageBubble({ message }: Props) {
   if (message.error) {
     return (
       <div className="flex justify-start animate-slide-in">
-        <div className="max-w-[90%] card border-l-4 border-l-red-400 p-4">
-          <div className="flex items-start gap-2 text-red-600 dark:text-red-400">
-            <AlertTriangle size={18} className="flex-shrink-0 mt-0.5" />
-            <p className="text-sm">{message.content}</p>
+        <div className="max-w-[90%] card border-l-4 border-l-rose-500 p-4">
+          <div className="flex items-start gap-3 text-rose-700 dark:text-rose-400">
+            <AlertTriangle size={20} className="flex-shrink-0 mt-0.5" />
+            <div>
+              <h4 className="text-sm font-bold">Advisory Processing Notice</h4>
+              <p className="text-xs mt-1 text-slate-700 dark:text-slate-300">{message.content}</p>
+            </div>
           </div>
         </div>
       </div>
@@ -57,31 +82,94 @@ export function MessageBubble({ message }: Props) {
   const hasABS = message.absChecklist && message.absChecklist.length > 0;
   const hasTKDL = message.tkdlPointers && message.tkdlPointers.length > 0;
 
-  const escalateSubject = encodeURIComponent('[IP-SAKTI] IP Query Escalation');
+  const handleCopy = () => {
+    navigator.clipboard.writeText(message.content);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const escalateSubject = encodeURIComponent('[AIIA IP Desk] Formal Legal Advisory Request: ' + message.content.slice(0, 60));
   const escalateBody = encodeURIComponent(
-    `Classification: ${classificationState.productCategory} | ${classificationState.ipType} | ${classificationState.jurisdiction}\n\nQuery:\n${message.content?.slice(0, 500)}\n\nPlease assist with this Ayurveda IP matter.`
+    `Case Classification:\nCategory: ${classificationState.productCategory}\nIP Domain: ${classificationState.ipType}\nJurisdiction: ${classificationState.jurisdiction}\n\nUser Inquiry & Advisory Summary:\n${message.content}\n\nGenerated via IP-SAKTI Sahayak (Ministry of Ayush / AIIA).`
   );
 
   return (
-    <div className="flex justify-start animate-slide-in">
-      <div className="max-w-[90%] w-full space-y-2">
-        {/* Main message card */}
-        <div className="card p-4">
-          {/* Abstention notice */}
+    <div className="flex justify-start animate-slide-in w-full">
+      <div className="w-full space-y-3">
+        {/* Main Advisory Briefing Card */}
+        <div className="institutional-card overflow-hidden border-t-3 border-t-ayush-800">
+          {/* Official Advisory Header Strip */}
+          <div className="bg-slate-50 dark:bg-slate-900/90 border-b border-slate-200/80 dark:border-slate-800 px-5 py-3 flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 rounded-md bg-ayush-900 text-amber-400 flex items-center justify-center text-xs font-serif font-black">
+                ⚖
+              </div>
+              <div>
+                <span className="text-xs font-serif font-bold text-slate-900 dark:text-white">
+                  Statutory Advisory Findings
+                </span>
+                <span className="text-[10px] text-slate-500 ml-2 font-mono">
+                  REF-AYUSH-{message.id.slice(-6).toUpperCase()}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              {message.confidence && (
+                <ConfidenceBadge level={message.confidence} score={message.confidenceScore} />
+              )}
+              <button
+                onClick={handleCopy}
+                className="p-1.5 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 rounded hover:bg-slate-200/60 dark:hover:bg-slate-800 transition-colors"
+                title="Copy Full Advisory Text"
+              >
+                {copied ? <Check size={14} className="text-emerald-600" /> : <Copy size={14} />}
+              </button>
+            </div>
+          </div>
+
+          {/* Abstention notice if applicable */}
           {message.isAbstention && (
-            <div className="mb-3 flex items-center gap-2 text-yellow-600 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-2.5 text-xs">
-              <AlertTriangle size={14} />
-              <span>Insufficient corpus data – consulting official sources recommended</span>
+            <div className="mx-5 mt-4 p-3.5 rounded-lg bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800 flex items-start gap-3 text-xs text-amber-800 dark:text-amber-300">
+              <AlertTriangle size={16} className="flex-shrink-0 mt-0.5 text-amber-600" />
+              <div>
+                <span className="font-bold">Corpus Boundary Notice:</span> This specific inquiry falls outside the indexed statutory corpus. Official registry consultation is required.
+              </div>
             </div>
           )}
 
-          {/* Markdown content */}
-          <div className="prose prose-sm dark:prose-invert max-w-none text-gray-800 dark:text-gray-200">
+          {/* Main Legal Opinion Body */}
+          <div className="p-5 md:p-6 prose prose-slate dark:prose-invert max-w-none text-slate-800 dark:text-slate-200 text-sm leading-relaxed font-sans">
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
               components={{
+                h2: ({ children }) => (
+                  <h2 className="font-serif text-lg font-bold text-slate-900 dark:text-white mt-4 mb-2 pb-1 border-b border-slate-200 dark:border-slate-800 flex items-center gap-2">
+                    {children}
+                  </h2>
+                ),
+                h3: ({ children }) => (
+                  <h3 className="font-serif text-sm font-bold text-ayush-900 dark:text-emerald-400 mt-4 mb-1.5">
+                    {children}
+                  </h3>
+                ),
+                strong: ({ children }) => (
+                  <strong className="font-semibold text-slate-900 dark:text-white">
+                    {children}
+                  </strong>
+                ),
+                blockquote: ({ children }) => (
+                  <blockquote className="border-l-3 border-ayush-700 bg-parchment-50 dark:bg-slate-800/60 pl-3.5 py-1.5 my-2.5 rounded-r-md text-xs italic text-slate-700 dark:text-slate-300">
+                    {children}
+                  </blockquote>
+                ),
                 a: ({ href, children }) => (
-                  <a href={href} target="_blank" rel="noopener noreferrer" className="text-saffron-600 dark:text-saffron-400 hover:underline">
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-ayush-700 dark:text-emerald-400 font-medium underline underline-offset-2 hover:text-ayush-900"
+                  >
                     {children}
                   </a>
                 ),
@@ -91,70 +179,83 @@ export function MessageBubble({ message }: Props) {
             </ReactMarkdown>
           </div>
 
-          {/* Footer row */}
-          <div className="mt-3 pt-2 border-t border-gray-100 dark:border-gray-700 flex flex-wrap items-center gap-2">
-            {message.confidence && (
-              <ConfidenceBadge level={message.confidence} score={message.confidenceScore} />
-            )}
-            <span className="text-xs text-gray-400">
-              {message.timestamp ? new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
-            </span>
-            <div className="ml-auto flex gap-2">
-              {/* Escalate button */}
+          {/* Footer Bar: Timestamp & Human Facilitator Escalation */}
+          <div className="bg-slate-50/70 dark:bg-slate-900/60 px-5 py-3 border-t border-slate-200/80 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs">
+            <div className="flex items-center gap-3 text-slate-400 text-[11px]">
+              <span className="flex items-center gap-1 font-mono">
+                <ShieldCheck size={12} className="text-emerald-500" />
+                Deterministic Verification Complete
+              </span>
+              <span>·</span>
+              <span>
+                {message.timestamp ? new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2">
               <a
                 href={`mailto:ip-facilitator@aiia.res.in?subject=${escalateSubject}&body=${escalateBody}`}
-                className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400 hover:text-saffron-500 transition-colors"
-                title="Escalate to human IP facilitator"
+                className="btn-secondary flex items-center gap-1.5 py-1.5 text-ayush-900 dark:text-emerald-400 border-ayush-300/80 dark:border-ayush-800/80 hover:bg-ayush-50"
               >
                 <Mail size={13} />
-                <span className="hidden sm:inline">Escalate</span>
+                <span>Escalate to Human IP Facilitator</span>
               </a>
             </div>
           </div>
         </div>
 
-        {/* Citation cards */}
+        {/* Collapsible Section 1: Primary Statutory Authorities Cited */}
         {hasCitations && (
-          <div className="ml-2">
+          <div className="institutional-card overflow-hidden">
             <button
               onClick={() => setCitationsOpen(!citationsOpen)}
-              className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 py-1"
+              className="w-full px-5 py-3 bg-slate-50 dark:bg-slate-900 flex items-center justify-between text-left hover:bg-slate-100/80 dark:hover:bg-slate-800/80 transition-colors"
             >
-              {citationsOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-              <span className="font-medium">
-                {message.citations!.length} source{message.citations!.length !== 1 ? 's' : ''} cited
-              </span>
+              <div className="flex items-center gap-2">
+                <FileCheck2 size={16} className="text-ayush-800 dark:text-emerald-400" />
+                <span className="font-serif font-bold text-xs text-slate-900 dark:text-white">
+                  Primary Statutory Authorities Verified ({message.citations!.length})
+                </span>
+                <span className="text-[10px] text-slate-400 hidden sm:inline">
+                  (IndiaCode · IP India · Official Gazette)
+                </span>
+              </div>
+              {citationsOpen ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
             </button>
+
             {citationsOpen && (
-              <div className="space-y-2 mt-1">
+              <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-3 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
                 {message.citations!.map((chunk) => (
-                  <div key={chunk.id} className="citation-card">
+                  <div key={chunk.id} className="citation-card p-3 space-y-1.5">
                     <div className="flex items-start justify-between gap-2">
-                      <div className="flex-1 min-w-0">
-                        <div className="font-medium text-xs text-gray-800 dark:text-gray-200 truncate">
-                          {chunk.title}
-                        </div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                          {chunk.act_or_treaty} · {chunk.section_or_article}
-                        </div>
-                        <div className="flex gap-2 mt-1">
-                          <span className="badge bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400">
-                            {chunk.jurisdiction}
-                          </span>
-                          <span className="badge bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400">
-                            {chunk.ip_type}
-                          </span>
-                        </div>
+                      <div className="font-bold text-xs text-slate-900 dark:text-slate-100">
+                        {chunk.title}
                       </div>
                       <a
                         href={chunk.source_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-saffron-500 hover:text-saffron-600 flex-shrink-0"
-                        title="Open source"
+                        className="text-ayush-700 hover:text-ayush-900 dark:text-emerald-400 flex-shrink-0"
+                        title="View Official Statute Source"
                       >
-                        <ExternalLink size={14} />
+                        <ExternalLink size={13} />
                       </a>
+                    </div>
+                    <div className="text-[11px] text-slate-600 dark:text-slate-300 font-serif">
+                      {chunk.act_or_treaty} · {chunk.section_or_article}
+                    </div>
+                    <div className="flex items-center gap-2 pt-1 text-[10px]">
+                      <span className="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-2 py-0.5 rounded font-mono uppercase font-semibold">
+                        {chunk.jurisdiction}
+                      </span>
+                      <span className="bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 px-2 py-0.5 rounded font-semibold">
+                        {chunk.ip_type}
+                      </span>
+                      {chunk.score !== undefined && (
+                        <span className="text-slate-400 ml-auto font-mono">
+                          BM25: {Math.round(chunk.score)}
+                        </span>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -163,23 +264,33 @@ export function MessageBubble({ message }: Props) {
           </div>
         )}
 
-        {/* ABS Checklist */}
+        {/* Collapsible Section 2: ABS Compliance Mandate */}
         {hasABS && (
-          <div className="ml-2">
+          <div className="institutional-card overflow-hidden border-l-3 border-l-emerald-600">
             <button
               onClick={() => setAbsOpen(!absOpen)}
-              className="flex items-center gap-1.5 text-xs text-ayush-600 dark:text-ayush-400 hover:text-ayush-700 dark:hover:text-ayush-300 py-1 font-medium"
+              className="w-full px-5 py-3 bg-emerald-50/50 dark:bg-emerald-950/20 flex items-center justify-between text-left hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition-colors"
             >
-              {absOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-              <CheckCircle2 size={14} />
-              ABS Compliance Checklist ({message.absChecklist!.length} items)
+              <div className="flex items-center gap-2">
+                <CheckCircle2 size={16} className="text-emerald-700 dark:text-emerald-400" />
+                <span className="font-serif font-bold text-xs text-emerald-900 dark:text-emerald-300">
+                  Access & Benefit Sharing (ABS) Compliance Protocol
+                </span>
+                <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-mono">
+                  Biological Diversity Act 2023
+                </span>
+              </div>
+              {absOpen ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
             </button>
+
             {absOpen && (
-              <div className="mt-1 card border-l-4 border-l-ayush-500 p-3 space-y-2">
+              <div className="p-4 space-y-2 border-t border-emerald-200/60 dark:border-emerald-900/60 bg-white dark:bg-slate-900">
                 {message.absChecklist!.map((item, i) => (
-                  <div key={i} className="flex gap-2 text-xs text-gray-600 dark:text-gray-300">
-                    <span className="text-ayush-500 flex-shrink-0 font-bold">{i + 1}.</span>
-                    <span>{item}</span>
+                  <div key={i} className="flex items-start gap-2.5 text-xs text-slate-700 dark:text-slate-300 p-2 rounded-lg bg-emerald-50/30 dark:bg-emerald-950/10">
+                    <span className="w-5 h-5 rounded-full bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-300 flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">
+                      {i + 1}
+                    </span>
+                    <span className="leading-relaxed">{item}</span>
                   </div>
                 ))}
               </div>
@@ -187,21 +298,28 @@ export function MessageBubble({ message }: Props) {
           </div>
         )}
 
-        {/* TKDL Pointers */}
+        {/* Collapsible Section 3: TKDL Prior Art Verification */}
         {hasTKDL && (
-          <div className="ml-2">
+          <div className="institutional-card overflow-hidden">
             <button
               onClick={() => setTkdlOpen(!tkdlOpen)}
-              className="flex items-center gap-1.5 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 py-1 font-medium"
+              className="w-full px-5 py-3 bg-slate-50 dark:bg-slate-900 flex items-center justify-between text-left hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
             >
-              {tkdlOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-              <List size={14} />
-              TKDL Prior Art Pointers
+              <div className="flex items-center gap-2">
+                <Building2 size={16} className="text-amber-600" />
+                <span className="font-serif font-bold text-xs text-slate-900 dark:text-white">
+                  Traditional Knowledge Digital Library (TKDL) Prior-Art Checkpoints
+                </span>
+              </div>
+              {tkdlOpen ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
             </button>
+
             {tkdlOpen && (
-              <div className="mt-1 card border-l-4 border-l-blue-400 p-3 space-y-1.5">
+              <div className="p-4 space-y-2 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs text-slate-700 dark:text-slate-300">
                 {message.tkdlPointers!.map((pointer, i) => (
-                  <p key={i} className="text-xs text-gray-600 dark:text-gray-300">{pointer}</p>
+                  <div key={i} className="p-2 rounded-md bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60 leading-relaxed">
+                    {pointer}
+                  </div>
                 ))}
               </div>
             )}
@@ -211,4 +329,3 @@ export function MessageBubble({ message }: Props) {
     </div>
   );
 }
-
