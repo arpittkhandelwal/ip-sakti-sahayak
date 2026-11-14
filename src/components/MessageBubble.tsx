@@ -14,12 +14,35 @@ import {
   Building2,
   Copy,
   Check,
+  HelpCircle,
+  Sparkles,
+  ArrowRight,
 } from 'lucide-react';
 import type { ChatMessage } from '../types';
 import { useAppStore } from '../store/appStore';
+import { getReformulations } from '../lib/reformulation';
+import { getCrossRef } from '../lib/crossRef';
 
 interface Props {
   message: ChatMessage;
+  onSuggestedQuery?: (q: string) => void;
+}
+
+const SECTION_EXPLANATIONS: Record<string, string> = {
+  '3(p)': 'Section 3(p) of the Patents Act, 1970 explicitly excludes from patentability any invention that in effect is traditional knowledge or is an aggregation or duplication of known properties of traditionally documented components.',
+  'section 7': 'Section 7 of the Biological Diversity Act, 2002 (as amended 2023) mandates prior intimation to the State Biodiversity Board (SBB) before commercial utilization of biological resources by Indian citizens and domestic entities.',
+  'section 3': 'Section 3 of the BD Act requires prior formal approval from the National Biodiversity Authority (NBA), Chennai before accessing biological resources or traditional knowledge for research or commercialization by foreign entities.',
+  'article 27': 'TRIPS Agreement Article 27.3(b) permits member nations to exclude plants, animals, and biological processes from patentability, forming the international legal justification for India\'s TK protection.',
+  'nagoya': 'The Nagoya Protocol under the CBD establishes the legal architecture for Access and Benefit Sharing (ABS), requiring Prior Informed Consent (PIC) and Mutually Agreed Terms (MAT).',
+  'gratk': 'WIPO GRATK Treaty (May 2024) mandates patent applicants worldwide to disclose the country of origin of genetic resources and associated traditional knowledge in their patent filings.',
+};
+
+function getExplanation(text: string): string | null {
+  const lower = text.toLowerCase();
+  for (const [key, val] of Object.entries(SECTION_EXPLANATIONS)) {
+    if (lower.includes(key)) return val;
+  }
+  return null;
 }
 
 function ConfidenceBadge({ level, score }: { level: string; score?: number }) {
@@ -36,11 +59,12 @@ function ConfidenceBadge({ level, score }: { level: string; score?: number }) {
   );
 }
 
-export function MessageBubble({ message }: Props) {
+export function MessageBubble({ message, onSuggestedQuery }: Props) {
   const [citationsOpen, setCitationsOpen] = useState(true);
   const [absOpen, setAbsOpen] = useState(true);
   const [tkdlOpen, setTkdlOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
   const { classificationState } = useAppStore();
 
   const isUser = message.role === 'user';
@@ -252,11 +276,27 @@ export function MessageBubble({ message }: Props) {
                         {chunk.ip_type}
                       </span>
                       {chunk.score !== undefined && (
-                        <span className="text-slate-400 ml-auto font-mono">
+                        <span className="text-slate-400 font-mono">
                           BM25: {Math.round(chunk.score)}
                         </span>
                       )}
+                      {getExplanation(chunk.section_or_article) && (
+                        <button
+                          type="button"
+                          onClick={() => setActiveTooltip(activeTooltip === chunk.id ? null : chunk.id)}
+                          className="ml-auto text-ayush-800 dark:text-emerald-400 hover:underline flex items-center gap-0.5 font-semibold"
+                          title="Statutory Explanation"
+                        >
+                          <HelpCircle size={11} />
+                          <span>Explain</span>
+                        </button>
+                      )}
                     </div>
+                    {activeTooltip === chunk.id && getExplanation(chunk.section_or_article) && (
+                      <div className="mt-2 p-2.5 rounded-lg bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-[11px] text-amber-900 dark:text-amber-200 leading-relaxed animate-fade-in">
+                        <strong>Statutory Context:</strong> {getExplanation(chunk.section_or_article)}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -323,6 +363,30 @@ export function MessageBubble({ message }: Props) {
                 ))}
               </div>
             )}
+          </div>
+        )}
+
+        {/* Section 4: Query Reformulation & Next Legal Steps */}
+        {!message.isAbstention && onSuggestedQuery && (
+          <div className="pt-1">
+            <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">
+              <Sparkles size={12} className="text-amber-500" />
+              <span>Related Legal Inquiries (Next Inquirer Steps):</span>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {getReformulations(classificationState).map((item) => (
+                <button
+                  key={item.label}
+                  type="button"
+                  onClick={() => onSuggestedQuery(item.query)}
+                  className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-ayush-600 dark:hover:border-ayush-500 hover:bg-ayush-50/50 dark:hover:bg-ayush-950/40 text-slate-700 dark:text-slate-300 text-xs font-medium flex items-center gap-1.5 transition-all shadow-xs group"
+                >
+                  <span>{item.icon}</span>
+                  <span className="group-hover:text-ayush-900 dark:group-hover:text-emerald-300 font-semibold">{item.label}</span>
+                  <ArrowRight size={11} className="text-slate-400 group-hover:translate-x-0.5 transition-transform" />
+                </button>
+              ))}
+            </div>
           </div>
         )}
       </div>

@@ -1,6 +1,7 @@
 import { useAppStore } from '../store/appStore';
 import { PRODUCT_CATEGORY_LABELS, IP_TYPE_LABELS } from '../types';
 import { ShieldCheck, Scale, ExternalLink, BookOpen, Building2, CheckCircle } from 'lucide-react';
+import { CorpusHealthPanel } from './CorpusHealthPanel';
 
 export function ClassifierSidebar() {
   const { classificationState, lastRetrievedChunks } = useAppStore();
@@ -12,6 +13,9 @@ export function ClassifierSidebar() {
 
   return (
     <div className="p-4 space-y-6 text-xs bg-white dark:bg-slate-900 h-full">
+      {/* Corpus Health & Index Status */}
+      <CorpusHealthPanel />
+
       {/* Docket Header */}
       <div>
         <div className="flex items-center justify-between mb-3 pb-2 border-b border-slate-200 dark:border-slate-800">

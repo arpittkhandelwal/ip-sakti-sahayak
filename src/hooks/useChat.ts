@@ -16,6 +16,7 @@ export function useChat() {
     language,
     setLanguage,
     jurisdiction,
+    setJurisdiction,
     classificationState,
     setClassificationState,
     sessionId,
@@ -105,6 +106,20 @@ export function useChat() {
         const supportedLangs: Language[] = ['en', 'hi', 'ta', 'bn', 'mr', 'te'];
         if (detectedLang && supportedLangs.includes(detectedLang) && detectedLang !== language) {
           setLanguage(detectedLang);
+        }
+
+        // Auto-detect jurisdiction from query keywords
+        const lowerQ = userInput.toLowerCase();
+        const intlKeywords = ['epo', 'uspto', 'wipo', 'pct', 'trips', 'nagoya', 'madrid', 'hague', 'international', 'foreign', 'export', 'gratk'];
+        const indiaKeywords = ['india', 'indian', 'nba', 'sbb', 'ipindia', 'section 3', 'patents act', 'bd act', 'cdsco', 'ayush', 'tkdl'];
+        const hasIntl = intlKeywords.some((k) => lowerQ.includes(k));
+        const hasIndia = indiaKeywords.some((k) => lowerQ.includes(k));
+        if (hasIntl && !hasIndia && jurisdiction !== 'international') {
+          setJurisdiction('international');
+        } else if (hasIndia && !hasIntl && jurisdiction !== 'india') {
+          setJurisdiction('india');
+        } else if (hasIntl && hasIndia && jurisdiction !== 'both') {
+          setJurisdiction('both');
         }
 
         // If clarification needed, ask and exit
@@ -227,6 +242,7 @@ export function useChat() {
       setIsSampleCorpus,
       setLastRetrievedChunks,
       setLanguage,
+      setJurisdiction,
     ],
   );
 

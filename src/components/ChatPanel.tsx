@@ -2,11 +2,14 @@ import { useState, useRef, useEffect } from 'react';
 import {
   Send, RotateCcw, Sparkles, Scale, ShieldAlert,
   FileText, Globe2, ChevronRight, MessageSquare, Languages,
+  Zap,
 } from 'lucide-react';
 import { useAppStore } from '../store/appStore';
 import { useChat } from '../hooks/useChat';
 import { MessageBubble } from './MessageBubble';
 import { TypingIndicator } from './TypingIndicator';
+import { ExportButton } from './ExportButton';
+import { VoiceRecorder } from './VoiceRecorder';
 
 // ── Practice Area Cards ─────────────────────────────────────────
 const PRACTICE_AREAS = [
@@ -104,11 +107,15 @@ const DEMO_QUESTIONS: DemoQ[] = [
 
 // ── Main Component ──────────────────────────────────────────────
 export function ChatPanel() {
-  const { messages, clearMessages, resetClassification, language } = useAppStore();
+  const { messages, clearMessages, resetClassification, language, classificationState, jurisdiction } = useAppStore();
   const { sendMessage, loadingStage } = useChat();
   const [input, setInput] = useState('');
+  const [dismissFallback, setDismissFallback] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const lastAssistantMsg = [...messages].reverse().find((m) => m.role === 'assistant');
+  const isFallbackActive = !dismissFallback && (lastAssistantMsg?.content?.includes('Statutory Advisory Brief') || false);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -172,9 +179,32 @@ export function ChatPanel() {
         ) : (
           <div className="max-w-4xl mx-auto space-y-5">
             {messages.map((msg) => (
-              <MessageBubble key={msg.id} message={msg} />
+              <MessageBubble
+                key={msg.id}
+                message={msg}
+                onSuggestedQuery={(q) => sendMessage(q)}
+              />
             ))}
             {isLoading && <TypingIndicator stage={loadingStage!} />}
+
+            {/* Offline / Deterministic Fallback Mode Banner */}
+            {isFallbackActive && (
+              <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800 flex items-center justify-between text-xs text-amber-900 dark:text-amber-200">
+                <div className="flex items-center gap-2">
+                  <Zap size={14} className="text-amber-600 flex-shrink-0" />
+                  <span>
+                    <strong>Deterministic BM25 Corpus Synthesis:</strong> Grounded statutory brief generated directly from indexed corpus. Full Sarvam LLM-enhanced generation activates with configured API credentials.
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setDismissFallback(true)}
+                  className="ml-3 text-amber-700 hover:text-amber-900 dark:text-amber-300 font-bold px-1.5 py-0.5"
+                >
+                  ✕
+                </button>
+              </div>
+            )}
           </div>
         )}
         <div ref={messagesEndRef} />
@@ -219,16 +249,34 @@ export function ChatPanel() {
                 {input.length}/2000
               </span>
             </div>
+
+            {/* Voice Input STT */}
+            <VoiceRecorder
+              language={language}
+              disabled={isLoading}
+              onTranscript={(text) => {
+                setInput(text);
+                textareaRef.current?.focus();
+              }}
+            />
+
             <div className="flex gap-1.5 flex-shrink-0">
               {messages.length > 0 && (
-                <button
-                  type="button"
-                  onClick={handleReset}
-                  className="btn-secondary h-12 w-11 flex items-center justify-center p-0 text-slate-500 hover:text-slate-700"
-                  title="Clear Session"
-                >
-                  <RotateCcw size={16} />
-                </button>
+                <>
+                  <ExportButton
+                    messages={messages}
+                    classificationState={classificationState}
+                    jurisdiction={jurisdiction}
+                  />
+                  <button
+                    type="button"
+                    onClick={handleReset}
+                    className="btn-secondary h-12 w-11 flex items-center justify-center p-0 text-slate-500 hover:text-slate-700"
+                    title="Clear Session"
+                  >
+                    <RotateCcw size={16} />
+                  </button>
+                </>
               )}
               <button
                 type="submit"

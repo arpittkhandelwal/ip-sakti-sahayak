@@ -1,0 +1,56 @@
+{
+  "CHUNK-biological-diversity-act-2002-abs-framework-and-2023-amendme-y36x": {
+    "relatedSections": [
+      "Section 3 – NBA Approval",
+      "Section 4 – ABS Agreements",
+      "Section 6 – Foreign Access"
+    ],
+    "internationalAnalog": "Nagoya Protocol Article 6 (ABS Prior Informed Consent)",
+    "explanation": "Section 7 of the BD Act gives domestic effect to the Nagoya Protocol prior informed consent obligation for State-level utilization."
+  },
+  "CHUNK-traditional-knowledge-digital-library-tkdl-overview-and-pate-7h8n": {
+    "relatedSections": [
+      "Section 2(1)(j) – Definition of Invention",
+      "Section 25 – Opposition grounds",
+      "Section 64 – Revocation"
+    ],
+    "internationalAnalog": "TRIPS Article 27.3(b)",
+    "explanation": "Section 3(p) implements India's TRIPS Art. 27.3(b) flexibility to exclude traditional knowledge from patentability."
+  },
+  "CHUNK-patents-act-1970-section-3-p-traditional-knowledge-exclusion": {
+    "relatedSections": [
+      "Section 2(1)(j) – Definition of Invention",
+      "Section 25 – Opposition grounds",
+      "Section 64 – Revocation"
+    ],
+    "internationalAnalog": "TRIPS Article 27.3(b)",
+    "explanation": "Section 3(p) implements India's TRIPS Art. 27.3(b) flexibility to exclude traditional knowledge from patentability."
+  },
+  "CHUNK-nagoya-protocol-on-access-to-genetic-resources-and-benefit-s-5fie": {
+    "relatedSections": [
+      "Article 7 – Benefit Sharing",
+      "Article 15 – Monitoring",
+      "Article 5 – Fair & Equitable Benefit Sharing"
+    ],
+    "internationalAnalog": "Indian BD Act Section 3 (NBA Prior Approval)",
+    "explanation": "Nagoya Protocol Article 6 PIC requirement is domesticated by the NBA prior approval mandate under Section 3 BD Act."
+  },
+  "CHUNK-trips-agreement-article-27-and-flexibilities-for-traditional": {
+    "relatedSections": [
+      "Article 28 – Patent Rights",
+      "Article 65 – Transitional Arrangements",
+      "Article 7 – Objectives"
+    ],
+    "internationalAnalog": "Indian Patents Act Sections 3(j) and 3(p)",
+    "explanation": "TRIPS Article 27.3(b) allows WTO members to exclude biological inventions — India implemented this via Sections 3(j) and 3(p) of the Patents Act."
+  },
+  "CHUNK-trips-agreement-article-27-and-flexibilities-for-traditional-mb2w": {
+    "relatedSections": [
+      "Article 28 – Patent Rights",
+      "Article 65 – Transitional Arrangements",
+      "Article 7 – Objectives"
+    ],
+    "internationalAnalog": "Indian Patents Act Sections 3(j) and 3(p)",
+    "explanation": "TRIPS Article 27.3(b) allows WTO members to exclude biological inventions — India implemented this via Sections 3(j) and 3(p) of the Patents Act."
+  }
+}

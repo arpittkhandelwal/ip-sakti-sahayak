@@ -1,4 +1,3 @@
-#!/usr/bin/env tsx
 // ============================================================
 // IP-SAKTI Sahayak – Corpus Ingestion Script
 // Reads /corpus/**/*.md, chunks by section, builds BM25 index.
@@ -220,12 +219,27 @@ async function main() {
 
   writeFileSync(OUTPUT_FILE, JSON.stringify(indexData, null, 2));
 
+  // Build cross-reference map
+  try {
+    const { getCrossRef } = await import('../src/lib/crossRef.js');
+    const crossRefMap: Record<string, unknown> = {};
+    for (const chunk of allChunks) {
+      const ref = getCrossRef(chunk.section_or_article);
+      if (ref) crossRefMap[chunk.id] = ref;
+    }
+    const crossRefPath = join(OUTPUT_DIR, 'crossRef.json');
+    writeFileSync(crossRefPath, JSON.stringify(crossRefMap, null, 2), 'utf-8');
+    console.log(`[ingest] Cross-reference map written: ${Object.keys(crossRefMap).length} entries → ${crossRefPath}`);
+  } catch (err) {
+    console.warn('[ingest] Cross-reference generation skipped:', (err as Error).message);
+  }
+
   console.log(`\n[ingest] ✅ Done!`);
   console.log(`[ingest] Total chunks: ${allChunks.length}`);
   console.log(`[ingest] Sample only: ${sampleOnly}`);
   console.log(`[ingest] Output: ${OUTPUT_FILE}`);
   console.log(`[ingest] File size: ${(readFileSync(OUTPUT_FILE).length / 1024).toFixed(1)} KB`);
-  
+
   if (sampleOnly) {
     console.log('\n[ingest] ⚠️  Only sample files indexed. Add real legal texts per CORPUS_GUIDE.md.');
   }
