@@ -1,113 +1,94 @@
 import { useAppStore } from '../store/appStore';
 import { PRODUCT_CATEGORY_LABELS, IP_TYPE_LABELS } from '../types';
-import { ShieldCheck, Scale, ExternalLink, BookOpen, Building2, CheckCircle } from 'lucide-react';
+import { ExternalLink, BookOpen, Building2 } from 'lucide-react';
 import { CorpusHealthPanel } from './CorpusHealthPanel';
 
 export function ClassifierSidebar() {
   const { classificationState, lastRetrievedChunks } = useAppStore();
   const { productCategory, jurisdiction, ipType, isClassified } = classificationState;
 
-  // Compute ABS mandate based on product category & jurisdiction
-  const isABSMandatory = productCategory !== 'unknown';
   const requiresNBA = jurisdiction === 'international' || jurisdiction === 'both';
 
   return (
-    <div className="p-4 space-y-6 text-xs bg-white dark:bg-slate-900 h-full">
-      {/* Corpus Health & Index Status */}
+    <div className="p-4 space-y-5 text-xs h-full overflow-y-auto">
       <CorpusHealthPanel />
 
-      {/* Docket Header */}
+      {/* Case classification */}
       <div>
-        <div className="flex items-center justify-between mb-3 pb-2 border-b border-slate-200 dark:border-slate-800">
-          <div className="flex items-center gap-1.5 font-serif font-bold text-slate-900 dark:text-white uppercase tracking-wider text-[11px]">
-            <Scale size={14} className="text-ayush-800 dark:text-emerald-400" />
-            <span>Case Classification Docket</span>
-          </div>
-          <span className={`px-2 py-0.5 rounded text-[10px] font-bold tracking-wide uppercase ${
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="text-[11px] font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Classification</h3>
+          <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${
             isClassified
-              ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800'
-              : 'bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800'
+              ? 'bg-green-50 dark:bg-green-950/40 text-green-700 dark:text-green-400'
+              : 'bg-slate-100 dark:bg-slate-800 text-slate-500'
           }`}>
-            {isClassified ? '✓ Verified' : '○ Analyzing'}
+            {isClassified ? 'Classified' : 'Pending'}
           </span>
         </div>
 
-        {/* Docket Fields */}
-        <div className="space-y-3 bg-slate-50 dark:bg-slate-850 p-3 rounded-lg border border-slate-200/80 dark:border-slate-800">
+        <div className="space-y-2.5 border border-slate-200 dark:border-slate-700 rounded-lg p-3">
           <div>
-            <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Product Category</span>
-            <div className="font-semibold text-slate-900 dark:text-slate-100 mt-0.5 text-xs">
-              {PRODUCT_CATEGORY_LABELS[productCategory]}
-            </div>
+            <div className="text-[10px] text-slate-400 uppercase tracking-wider mb-0.5">Category</div>
+            <div className="font-medium text-slate-800 dark:text-slate-200">{PRODUCT_CATEGORY_LABELS[productCategory]}</div>
           </div>
-
-          <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-200/60 dark:border-slate-800/60">
+          <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
             <div>
-              <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Jurisdiction</span>
-              <div className="font-semibold text-slate-800 dark:text-slate-200 mt-0.5 text-xs">
-                {jurisdiction === 'india' ? '🇮🇳 India' : jurisdiction === 'international' ? '🌍 International' : '⚖️ Cross-Border'}
+              <div className="text-[10px] text-slate-400 uppercase tracking-wider mb-0.5">Jurisdiction</div>
+              <div className="font-medium text-slate-800 dark:text-slate-200">
+                {jurisdiction === 'india' ? 'India' : jurisdiction === 'international' ? 'International' : 'Cross-Border'}
               </div>
             </div>
             <div>
-              <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">IP Domain</span>
-              <div className="font-semibold text-slate-800 dark:text-slate-200 mt-0.5 text-xs">
-                {IP_TYPE_LABELS[ipType]}
-              </div>
+              <div className="text-[10px] text-slate-400 uppercase tracking-wider mb-0.5">IP Domain</div>
+              <div className="font-medium text-slate-800 dark:text-slate-200">{IP_TYPE_LABELS[ipType]}</div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* ABS Regulatory Mandate Card */}
-      <div className="space-y-2">
-        <h3 className="font-serif font-bold text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-          <ShieldCheck size={13} className="text-emerald-600" />
-          <span>ABS Regulatory Posture</span>
-        </h3>
-        <div className="p-3 rounded-lg bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/60 space-y-2">
+      {/* ABS posture */}
+      <div>
+        <h3 className="text-[11px] font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">ABS Requirement</h3>
+        <div className="border border-slate-200 dark:border-slate-700 rounded-lg p-3 space-y-1.5">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-semibold text-emerald-950 dark:text-emerald-200">
-              {requiresNBA ? 'National Biodiversity Authority (NBA)' : 'State Biodiversity Board (SBB)'}
+            <span className="font-medium text-slate-800 dark:text-slate-200">
+              {requiresNBA ? 'NBA approval' : 'SBB intimation'}
             </span>
-            <span className="text-[10px] font-mono font-bold text-emerald-700 bg-emerald-100/80 dark:bg-emerald-900/60 px-1.5 py-0.5 rounded">
-              {requiresNBA ? 'Form I Approval' : 'Sec 7 Intimation'}
+            <span className="text-[10px] text-slate-500 font-mono">
+              {requiresNBA ? 'Form I' : 'Sec 7'}
             </span>
           </div>
-          <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
+          <p className="text-slate-500 dark:text-slate-400 leading-relaxed">
             {requiresNBA
-              ? 'International utilization or foreign entities require mandatory prior approval from NBA (Chennai) under Section 3 of BD Act 2002.'
-              : 'Domestic AYUSH manufacturers require prior intimation to State Biodiversity Board under the 2023 Amendment to the BD Act.'}
+              ? 'International or foreign entities need prior approval from the National Biodiversity Authority (Section 3).'
+              : 'Domestic AYUSH manufacturers need prior intimation to the State Biodiversity Board (2023 Amendment).'}
           </p>
         </div>
       </div>
 
-      {/* Primary Corpus Chunks */}
+      {/* Retrieved chunks */}
       {lastRetrievedChunks.length > 0 && (
-        <div className="space-y-2.5">
-          <div className="flex items-center justify-between">
-            <h3 className="font-serif font-bold text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-              <BookOpen size={13} className="text-ayush-800 dark:text-emerald-400" />
-              <span>Verified Corpus Chunks ({lastRetrievedChunks.length})</span>
+        <div>
+          <div className="flex items-center gap-1.5 mb-2">
+            <BookOpen size={12} className="text-slate-400" />
+            <h3 className="text-[11px] font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+              Sources retrieved ({lastRetrievedChunks.length})
             </h3>
           </div>
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             {lastRetrievedChunks.map((chunk) => (
               <div
                 key={chunk.id}
-                className="p-2.5 rounded-lg border border-slate-200/80 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-850 hover:border-slate-300 transition-colors"
+                className="border border-slate-200 dark:border-slate-700 rounded-lg p-2.5"
               >
-                <div className="font-semibold text-slate-800 dark:text-slate-200 text-xs truncate">
-                  {chunk.title}
-                </div>
-                <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                <div className="font-medium text-slate-800 dark:text-slate-200 truncate">{chunk.title}</div>
+                <div className="text-slate-500 dark:text-slate-400 mt-0.5">
                   {chunk.act_or_treaty} ({chunk.section_or_article})
                 </div>
-                <div className="flex items-center justify-between mt-2 pt-1 border-t border-slate-200/60 dark:border-slate-800/60 text-[10px]">
-                  <span className="font-mono text-slate-400 uppercase">{chunk.jurisdiction}</span>
+                <div className="flex items-center justify-between mt-1.5 pt-1 border-t border-slate-100 dark:border-slate-800">
+                  <span className="font-mono text-slate-400 uppercase text-[10px]">{chunk.jurisdiction}</span>
                   {chunk.score !== undefined && (
-                    <span className="text-emerald-600 dark:text-emerald-400 font-mono font-bold">
-                      BM25 {Math.round(chunk.score)}
-                    </span>
+                    <span className="text-slate-400 font-mono text-[10px]">BM25 {Math.round(chunk.score)}</span>
                   )}
                 </div>
               </div>
@@ -116,30 +97,30 @@ export function ClassifierSidebar() {
         </div>
       )}
 
-      {/* Official Government Portals */}
-      <div className="border-t border-slate-200 dark:border-slate-800 pt-4 space-y-2.5">
-        <h3 className="font-serif font-bold text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-          <Building2 size={13} className="text-amber-600" />
-          <span>Statutory Registries & Portals</span>
-        </h3>
-        <div className="space-y-1.5">
+      {/* Official portals */}
+      <div className="border-t border-slate-200 dark:border-slate-700 pt-4">
+        <div className="flex items-center gap-1.5 mb-2">
+          <Building2 size={12} className="text-slate-400" />
+          <h3 className="text-[11px] font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Official portals</h3>
+        </div>
+        <div className="space-y-0.5">
           {[
-            { label: 'IP India (Patents, GI & Trademarks)', url: 'https://ipindia.gov.in' },
-            { label: 'TKDL (CSIR-Ayush Prior Art Library)', url: 'https://tkdl.res.in' },
-            { label: 'NBA India (E-Filings for ABS)', url: 'https://nbaindia.org' },
-            { label: 'Ayush Regulatory Portal (API Online)', url: 'https://ayush.gov.in' },
-            { label: 'WIPO GRATK Treaty (Genetic Resources)', url: 'https://www.wipo.int/gratk/en/' },
-            { label: 'ABS Clearing-House (Nagoya IRCC)', url: 'https://absch.cbd.int' },
+            { label: 'IP India', url: 'https://ipindia.gov.in' },
+            { label: 'TKDL', url: 'https://tkdl.res.in' },
+            { label: 'NBA India', url: 'https://nbaindia.org' },
+            { label: 'Ayush Portal', url: 'https://ayush.gov.in' },
+            { label: 'WIPO GRATK', url: 'https://www.wipo.int/gratk/en/' },
+            { label: 'ABS Clearing-House', url: 'https://absch.cbd.int' },
           ].map(({ label, url }) => (
             <a
               key={url}
               href={url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-between p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-colors text-[11px]"
+              className="flex items-center justify-between p-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors"
             >
-              <span className="truncate pr-2">{label}</span>
-              <ExternalLink size={12} className="text-slate-400 flex-shrink-0" />
+              <span>{label}</span>
+              <ExternalLink size={11} className="text-slate-400" />
             </a>
           ))}
         </div>

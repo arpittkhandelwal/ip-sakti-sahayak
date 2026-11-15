@@ -1,9 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import {
-  Send, RotateCcw, Sparkles, Scale, ShieldAlert,
-  FileText, Globe2, ChevronRight, MessageSquare, Languages,
-  Zap,
-} from 'lucide-react';
+import { Send, RotateCcw, Scale, ShieldAlert, FileText, Globe2 } from 'lucide-react';
 import { useAppStore } from '../store/appStore';
 import { useChat } from '../hooks/useChat';
 import { MessageBubble } from './MessageBubble';
@@ -11,111 +7,58 @@ import { TypingIndicator } from './TypingIndicator';
 import { ExportButton } from './ExportButton';
 import { VoiceRecorder } from './VoiceRecorder';
 
-// ── Practice Area Cards ─────────────────────────────────────────
 const PRACTICE_AREAS = [
   {
     icon: Scale,
-    title: 'Patents Act, 1970 § 3(p)',
-    category: 'Patentability',
+    title: 'Patents Act § 3(p)',
     summary: 'Classical texts, TKDL prior-art bar, novel extraction vs. traditional knowledge.',
     sampleQuery: 'Can a classical Ayurvedic formulation like Triphala be patented under Section 3(p)?',
   },
   {
     icon: ShieldAlert,
     title: 'Biological Diversity Act 2023',
-    category: 'ABS Compliance',
-    summary: 'NBA Form I approval vs. SBB Section 7 prior intimation & benefit-sharing mandates.',
+    summary: 'NBA Form I approval vs. SBB Section 7 prior intimation & benefit-sharing.',
     sampleQuery: 'What is the ABS compliance process for Indian entities under the 2023 Amendment?',
   },
   {
     icon: FileText,
     title: 'Drugs & Cosmetics Act 1940',
-    category: 'Regulatory',
-    summary: 'First Schedule classical medicines, Schedule Y-A Phytopharmaceuticals, FSSAI Ayurveda Aahar.',
+    summary: 'First Schedule classical medicines, Schedule Y-A Phytopharmaceuticals.',
     sampleQuery: 'How is a Schedule Y-A phytopharmaceutical regulated differently from a classical drug?',
   },
   {
     icon: Globe2,
     title: 'International IP Treaties',
-    category: 'Cross-Border',
-    summary: 'WIPO GRATK Treaty 2024 disclosure, Nagoya Protocol PIC/MAT, TRIPS Article 27.3(b).',
+    summary: 'WIPO GRATK Treaty 2024, Nagoya Protocol PIC/MAT, TRIPS Article 27.3(b).',
     sampleQuery: 'How does the WIPO GRATK Treaty 2024 affect Ayurvedic patent applications internationally?',
   },
 ];
 
-// ── Quick-access pill shortcuts ─────────────────────────────────
-const STATUTORY_PILLS = [
+const QUICK_PILLS = [
   { label: 'Section 3(p)', query: 'Does Section 3(p) prevent patenting my modified herbal formulation?' },
   { label: 'NBA vs SBB', query: 'Do Indian AYUSH companies need NBA approval or only SBB intimation under 2023 Rules?' },
   { label: 'TKDL Prior Art', query: 'How does TKDL access by USPTO and EPO prevent biopiracy of Ayurveda?' },
-  { label: 'GI Tag Eligibility', query: 'What criteria must a regional Ayurvedic preparation fulfill for a Geographical Indication?' },
+  { label: 'GI Tag', query: 'What criteria must a regional Ayurvedic preparation fulfill for a Geographical Indication?' },
   { label: 'Class 5 Trademark', query: 'How should an Ayurvedic enterprise protect brand names under Trade Marks Act 1999?' },
 ];
 
-// ── Demo Questions – bilingual (English + Hindi) ───────────────
-interface DemoQ {
-  lang: 'en' | 'hi';
-  flag: string;
-  question: string;
-  tag: string;
-}
-
-const DEMO_QUESTIONS: DemoQ[] = [
-  // English demos
-  {
-    lang: 'en', flag: '🇬🇧',
-    tag: '§ 3(p) Patents',
-    question: 'Can a classical Ayurvedic formulation like Triphala be patented under Section 3(p) of the Patents Act?',
-  },
-  {
-    lang: 'en', flag: '🇬🇧',
-    tag: 'ABS · BDA 2023',
-    question: 'What ABS compliance steps must an Ayurvedic company follow under the Biological Diversity (Amendment) Act 2023?',
-  },
-  {
-    lang: 'en', flag: '🇬🇧',
-    tag: 'GI Act',
-    question: 'What criteria must a regional Ayurvedic preparation fulfill to be registered as a Geographical Indication?',
-  },
-  {
-    lang: 'en', flag: '🇬🇧',
-    tag: 'WIPO GRATK 2024',
-    question: 'How does the WIPO GRATK Treaty 2024 require disclosure of traditional knowledge in patent applications?',
-  },
-  // Hindi demos
-  {
-    lang: 'hi', flag: '🇮🇳',
-    tag: 'पेटेंट धारा 3(p)',
-    question: 'क्या आयुर्वेदिक दवाओं जैसे त्रिफला का पेटेंट हो सकता है? धारा 3(p) क्या कहती है?',
-  },
-  {
-    lang: 'hi', flag: '🇮🇳',
-    tag: 'नागोया प्रोटोकॉल',
-    question: 'नागोया प्रोटोकॉल भारतीय जैव संसाधनों को कैसे बचाता है और ABS अनुपालन क्या है?',
-  },
-  {
-    lang: 'hi', flag: '🇮🇳',
-    tag: 'GI टैग',
-    question: 'भौगोलिक संकेत (GI टैग) के लिए आयुर्वेदिक उत्पाद की पात्रता क्या है?',
-  },
-  {
-    lang: 'hi', flag: '🇮🇳',
-    tag: 'TKDL',
-    question: 'TKDL क्या है और यह आयुर्वेदिक पारम्परिक ज्ञान की जैव-चोरी से कैसे रक्षा करता है?',
-  },
+const DEMO_QUESTIONS = [
+  { lang: 'en' as const, tag: '§ 3(p)', question: 'Can a classical Ayurvedic formulation like Triphala be patented under Section 3(p) of the Patents Act?' },
+  { lang: 'en' as const, tag: 'ABS', question: 'What ABS compliance steps must an Ayurvedic company follow under the Biological Diversity (Amendment) Act 2023?' },
+  { lang: 'en' as const, tag: 'GI Act', question: 'What criteria must a regional Ayurvedic preparation fulfill to be registered as a Geographical Indication?' },
+  { lang: 'en' as const, tag: 'WIPO GRATK', question: 'How does the WIPO GRATK Treaty 2024 require disclosure of traditional knowledge in patent applications?' },
+  { lang: 'hi' as const, tag: 'पेटेंट 3(p)', question: 'क्या आयुर्वेदिक दवाओं जैसे त्रिफला का पेटेंट हो सकता है? धारा 3(p) क्या कहती है?' },
+  { lang: 'hi' as const, tag: 'नागोया', question: 'नागोया प्रोटोकॉल भारतीय जैव संसाधनों को कैसे बचाता है और ABS अनुपालन क्या है?' },
+  { lang: 'hi' as const, tag: 'GI टैग', question: 'भौगोलिक संकेत (GI टैग) के लिए आयुर्वेदिक उत्पाद की पात्रता क्या है?' },
+  { lang: 'hi' as const, tag: 'TKDL', question: 'TKDL क्या है और यह आयुर्वेदिक पारम्परिक ज्ञान की जैव-चोरी से कैसे रक्षा करता है?' },
 ];
 
-// ── Main Component ──────────────────────────────────────────────
 export function ChatPanel() {
   const { messages, clearMessages, resetClassification, language, classificationState, jurisdiction } = useAppStore();
   const { sendMessage, loadingStage } = useChat();
   const [input, setInput] = useState('');
-  const [dismissFallback, setDismissFallback] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-
-  const lastAssistantMsg = [...messages].reverse().find((m) => m.role === 'assistant');
-  const isFallbackActive = !dismissFallback && (lastAssistantMsg?.content?.includes('Statutory Advisory Brief') || false);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -143,8 +86,6 @@ export function ChatPanel() {
   };
 
   const fireQuery = (q: string) => {
-    setInput(q);
-    // small timeout so the textarea value is visible briefly before submit
     setTimeout(() => {
       sendMessage(q);
       setInput('');
@@ -168,16 +109,16 @@ export function ChatPanel() {
     'Ask about Ayurveda patents, Section 3(p), ABS compliance, GI tags, TKDL, or D&C regulatory pathways…';
 
   return (
-    <div className="flex flex-col h-full bg-slate-50/70 dark:bg-slate-950">
-      {/* Scrollable area */}
-      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-6 space-y-6">
+    <div className="flex flex-col h-full bg-white dark:bg-slate-950">
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-6 space-y-4">
         {messages.length === 0 ? (
-          <ExecutiveLegalPortal
+          <WelcomeScreen
             onSelectQuery={(q) => { setInput(q); textareaRef.current?.focus(); }}
             onFireQuery={fireQuery}
           />
         ) : (
-          <div className="max-w-4xl mx-auto space-y-5">
+          <div className="max-w-3xl mx-auto space-y-4">
             {messages.map((msg) => (
               <MessageBubble
                 key={msg.id}
@@ -186,51 +127,29 @@ export function ChatPanel() {
               />
             ))}
             {isLoading && <TypingIndicator stage={loadingStage!} />}
-
-            {/* Offline / Deterministic Fallback Mode Banner */}
-            {isFallbackActive && (
-              <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800 flex items-center justify-between text-xs text-amber-900 dark:text-amber-200">
-                <div className="flex items-center gap-2">
-                  <Zap size={14} className="text-amber-600 flex-shrink-0" />
-                  <span>
-                    <strong>Deterministic BM25 Corpus Synthesis:</strong> Grounded statutory brief generated directly from indexed corpus. Full Sarvam LLM-enhanced generation activates with configured API credentials.
-                  </span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setDismissFallback(true)}
-                  className="ml-3 text-amber-700 hover:text-amber-900 dark:text-amber-300 font-bold px-1.5 py-0.5"
-                >
-                  ✕
-                </button>
-              </div>
-            )}
           </div>
         )}
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input Console */}
-      <div className="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3 z-10 shadow-lg">
-        <div className="max-w-4xl mx-auto space-y-2">
-          {/* Quick Statute Pills */}
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs no-scrollbar">
-            <span className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex-shrink-0 mr-1 flex items-center gap-1">
-              <Sparkles size={11} className="text-amber-500" /> Quick:
-            </span>
-            {STATUTORY_PILLS.map((pill) => (
+      {/* Input bar */}
+      <div className="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3">
+        <div className="max-w-3xl mx-auto space-y-2">
+          {/* Quick pills */}
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 no-scrollbar">
+            {QUICK_PILLS.map((pill) => (
               <button
                 key={pill.label}
                 type="button"
                 onClick={() => { setInput(pill.query); textareaRef.current?.focus(); }}
-                className="whitespace-nowrap px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition-colors text-[11px] font-medium"
+                className="whitespace-nowrap px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-[11px] transition-colors flex-shrink-0"
               >
                 {pill.label}
               </button>
             ))}
           </div>
 
-          {/* Input Form */}
+          {/* Input */}
           <form onSubmit={handleSubmit} className="flex gap-2 items-end">
             <div className="flex-1 relative">
               <textarea
@@ -243,14 +162,13 @@ export function ChatPanel() {
                 maxLength={2000}
                 disabled={isLoading}
                 className="input-field pr-12 text-sm leading-relaxed"
-                style={{ minHeight: '48px' }}
+                style={{ minHeight: '44px' }}
               />
               <span className="absolute right-3 bottom-3 text-[10px] text-slate-400 font-mono">
                 {input.length}/2000
               </span>
             </div>
 
-            {/* Voice Input STT */}
             <VoiceRecorder
               language={language}
               disabled={isLoading}
@@ -271,31 +189,27 @@ export function ChatPanel() {
                   <button
                     type="button"
                     onClick={handleReset}
-                    className="btn-secondary h-12 w-11 flex items-center justify-center p-0 text-slate-500 hover:text-slate-700"
-                    title="Clear Session"
+                    className="btn-secondary h-11 w-10 flex items-center justify-center p-0 text-slate-500"
+                    title="Clear chat"
                   >
-                    <RotateCcw size={16} />
+                    <RotateCcw size={15} />
                   </button>
                 </>
               )}
               <button
                 type="submit"
                 disabled={!input.trim() || isLoading}
-                className="btn-primary h-12 px-5 flex items-center gap-2"
+                className="btn-primary h-11 px-4 flex items-center gap-2"
               >
-                <Send size={15} />
-                <span className="hidden sm:inline font-semibold">Analyze</span>
+                <Send size={14} />
+                <span className="hidden sm:inline">Send</span>
               </button>
             </div>
           </form>
 
-          {/* Footnote */}
-          <div className="flex items-center justify-between text-[11px] text-slate-400 dark:text-slate-500 px-1">
-            <div className="flex items-center gap-2">
-              <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-              <span>Patents Act 1970 · BD Act 2023 · D&amp;C Act 1940 · WIPO GRATK 2024</span>
-            </div>
-            <span>Information Only · Not Legal Advice</span>
+          <div className="flex items-center justify-between text-[11px] text-slate-400 dark:text-slate-500 px-0.5">
+            <span>Patents Act 1970 · BD Act 2023 · D&amp;C Act 1940 · WIPO GRATK 2024</span>
+            <span>Not legal advice</span>
           </div>
         </div>
       </div>
@@ -303,8 +217,7 @@ export function ChatPanel() {
   );
 }
 
-// ── Executive Legal Portal (Welcome Screen) ─────────────────────
-function ExecutiveLegalPortal({
+function WelcomeScreen({
   onSelectQuery,
   onFireQuery,
 }: {
@@ -315,78 +228,35 @@ function ExecutiveLegalPortal({
   const visibleDemos = DEMO_QUESTIONS.filter((d) => d.lang === demoTab);
 
   return (
-    <div className="max-w-4xl mx-auto py-6 space-y-8 animate-fade-in">
-
-      {/* Official Government Dossier Banner */}
-      <div className="institutional-card p-6 md:p-8 bg-gradient-to-br from-white via-parchment-50 to-amber-50/30 dark:from-slate-900 dark:via-slate-900 dark:to-ayush-950/20 border-l-4 border-l-ayush-800 relative overflow-hidden">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
-          <div className="space-y-2 max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-ayush-100/80 dark:bg-ayush-950 text-ayush-900 dark:text-emerald-300 text-[11px] font-bold tracking-wider uppercase border border-ayush-300/60 dark:border-ayush-800">
-              <span>SIH26045</span>
-              <span>·</span>
-              <span>AIIA / Ministry of Ayush</span>
-            </div>
-            <h1 className="font-serif text-2xl md:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
-              Ayurveda IP &amp; Regulatory Guidance Portal
-            </h1>
-            <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-sans">
-              Autonomous legal research assistant for Indian IP law, ABS compliance, TKDL prior-art
-              verification, and regulatory pathways — in English and Hindi.
-            </p>
-          </div>
-
-          <div className="flex-shrink-0 bg-white/80 dark:bg-slate-800/80 p-4 rounded-xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm space-y-2 text-xs">
-            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Retrieval Engine</div>
-            <div className="flex items-center gap-2 text-slate-800 dark:text-slate-200 font-semibold">
-              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-              Deterministic BM25 Index
-            </div>
-            <div className="text-[11px] text-slate-500 dark:text-slate-400">
-              46 Statutory Sections Indexed<br />No Embedding Hallucination Risk
-            </div>
-          </div>
-        </div>
+    <div className="max-w-3xl mx-auto py-4 space-y-6">
+      {/* Title */}
+      <div>
+        <h1 className="text-xl font-semibold text-slate-900 dark:text-white">Ayurveda IP & Regulatory Guidance</h1>
+        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+          Legal research assistant for Indian IP law, ABS compliance, TKDL prior-art, and regulatory pathways — in English and Hindi.
+        </p>
       </div>
 
-      {/* 4 Core Practice Areas */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 font-sans">
-            Core Statutory Practice Areas
-          </h2>
-          <span className="text-[11px] text-ayush-700 dark:text-emerald-400 font-medium">
-            Click to pre-load a query
-          </span>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {/* Practice areas */}
+      <div>
+        <h2 className="text-xs font-medium text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2">Practice areas</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {PRACTICE_AREAS.map((area) => {
             const Icon = area.icon;
             return (
               <button
                 key={area.title}
                 onClick={() => onSelectQuery(area.sampleQuery)}
-                className="institutional-card p-5 text-left hover:border-ayush-700 dark:hover:border-ayush-600 hover:shadow-md transition-all group flex flex-col justify-between"
+                className="border border-slate-200 dark:border-slate-700 rounded-xl p-4 text-left hover:border-slate-400 dark:hover:border-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all group"
               >
-                <div>
-                  <div className="flex items-start justify-between gap-3 mb-2.5">
-                    <div className="w-9 h-9 rounded-lg bg-ayush-50 dark:bg-ayush-950/60 border border-ayush-200 dark:border-ayush-800/60 flex items-center justify-center text-ayush-800 dark:text-emerald-400 group-hover:bg-ayush-800 group-hover:text-white transition-colors">
-                      <Icon size={18} />
-                    </div>
-                    <span className="text-[10px] uppercase font-bold text-slate-500 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded">
-                      {area.category}
-                    </span>
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 dark:text-slate-400 group-hover:bg-slate-200 dark:group-hover:bg-slate-700 transition-colors flex-shrink-0">
+                    <Icon size={16} />
                   </div>
-                  <h3 className="font-serif font-bold text-slate-900 dark:text-white text-base group-hover:text-ayush-900 dark:group-hover:text-emerald-300 transition-colors">
-                    {area.title}
-                  </h3>
-                  <p className="text-xs text-slate-600 dark:text-slate-400 mt-1.5 leading-relaxed">
-                    {area.summary}
-                  </p>
-                </div>
-                <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs text-ayush-800 dark:text-emerald-400 font-semibold group-hover:translate-x-0.5 transition-transform">
-                  <span>Open Advisory Brief</span>
-                  <ChevronRight size={14} />
+                  <div className="min-w-0">
+                    <div className="text-sm font-medium text-slate-800 dark:text-slate-200">{area.title}</div>
+                    <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">{area.summary}</div>
+                  </div>
                 </div>
               </button>
             );
@@ -394,80 +264,52 @@ function ExecutiveLegalPortal({
         </div>
       </div>
 
-      {/* ── Demo Questions – Bilingual ─────────────────────── */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <MessageSquare size={14} className="text-ayush-700 dark:text-emerald-400" />
-            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 font-sans">
-              Demo Questions
-            </h2>
-          </div>
-          {/* Language tab toggle */}
-          <div className="flex items-center gap-1 p-0.5 bg-slate-100 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+      {/* Demo questions */}
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="text-xs font-medium text-slate-400 dark:text-slate-500 uppercase tracking-wider">Sample questions</h2>
+          <div className="flex gap-1">
             <button
               onClick={() => setDemoTab('en')}
-              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold transition-colors ${
+              className={`px-2.5 py-1 rounded text-xs transition-colors ${
                 demoTab === 'en'
-                  ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 shadow-sm'
+                  ? 'bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-medium'
                   : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'
               }`}
             >
-              <span>🇬🇧</span> English
+              English
             </button>
             <button
               onClick={() => setDemoTab('hi')}
-              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold transition-colors ${
+              className={`px-2.5 py-1 rounded text-xs transition-colors ${
                 demoTab === 'hi'
-                  ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 shadow-sm'
+                  ? 'bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-medium'
                   : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'
               }`}
             >
-              <span>🇮🇳</span> हिंदी
+              हिंदी
             </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {visibleDemos.map((demo, i) => (
             <button
               key={i}
               onClick={() => onFireQuery(demo.question)}
-              className="institutional-card p-4 text-left group hover:border-ayush-600 dark:hover:border-ayush-700 hover:shadow-md transition-all"
+              className="border border-slate-200 dark:border-slate-700 rounded-xl p-3.5 text-left hover:border-slate-400 dark:hover:border-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all group"
             >
-              <div className="flex items-start gap-3">
-                <div className="flex-shrink-0 mt-0.5">
-                  <span className="inline-flex items-center justify-center w-6 h-6 rounded bg-saffron-100 dark:bg-saffron-900/30 text-saffron-700 dark:text-saffron-300 text-xs font-bold">
-                    {i + 1}
-                  </span>
-                </div>
-                <div className="min-w-0">
-                  <span className="inline-block text-[10px] uppercase font-bold tracking-wider text-ayush-700 dark:text-emerald-400 bg-ayush-50 dark:bg-ayush-950/50 px-1.5 py-0.5 rounded mb-1.5 border border-ayush-200/60 dark:border-ayush-800/50">
-                    {demo.tag}
-                  </span>
-                  <p className={`text-sm text-slate-700 dark:text-slate-300 leading-snug group-hover:text-ayush-900 dark:group-hover:text-emerald-200 transition-colors ${
-                    demo.lang === 'hi' ? 'font-hindi' : ''
-                  }`}>
-                    {demo.question}
-                  </p>
-                </div>
-              </div>
-              <div className="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-400 group-hover:text-ayush-700 dark:group-hover:text-emerald-400 transition-colors font-medium">
-                <span className="flex items-center gap-1">
-                  <Languages size={11} />
-                  {demo.lang === 'hi' ? 'हिंदी · क्लिक करें' : 'Click to submit'}
-                </span>
-                <ChevronRight size={12} />
-              </div>
+              <div className="text-[10px] font-medium text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1">{demo.tag}</div>
+              <p className={`text-sm text-slate-700 dark:text-slate-300 leading-snug ${demo.lang === 'hi' ? 'font-hindi' : ''}`}>
+                {demo.question}
+              </p>
             </button>
           ))}
         </div>
 
         {demoTab === 'hi' && (
-          <p className="text-[11px] text-slate-400 dark:text-slate-500 text-center pt-1">
-            हिंदी प्रश्न स्वचालित रूप से अंग्रेज़ी में अनुवादित होकर BM25 इंजन से उत्तर प्राप्त करेंगे, फिर हिंदी में वापस अनुवादित होंगे।
-            <br />
-            <span className="italic">(Hindi queries are auto-translated to English for retrieval, then the answer is returned in Hindi.)</span>
+          <p className="text-[11px] text-slate-400 dark:text-slate-500 text-center mt-2">
+            Hindi queries are auto-translated to English for retrieval, then returned in Hindi.
           </p>
         )}
       </div>

@@ -8,20 +8,15 @@ import {
   AlertTriangle,
   Mail,
   CheckCircle2,
-  FileCheck2,
-  Scale,
-  ShieldCheck,
+  FileText,
   Building2,
   Copy,
   Check,
-  HelpCircle,
-  Sparkles,
   ArrowRight,
 } from 'lucide-react';
 import type { ChatMessage } from '../types';
 import { useAppStore } from '../store/appStore';
 import { getReformulations } from '../lib/reformulation';
-import { getCrossRef } from '../lib/crossRef';
 
 interface Props {
   message: ChatMessage;
@@ -45,20 +40,6 @@ function getExplanation(text: string): string | null {
   return null;
 }
 
-function ConfidenceBadge({ level, score }: { level: string; score?: number }) {
-  const isHigh = level === 'High';
-  const isMed = level === 'Medium';
-  const cls = isHigh ? 'badge-high' : isMed ? 'badge-medium' : 'badge-low';
-
-  return (
-    <span className={`badge ${cls}`}>
-      <span className={`w-1.5 h-1.5 rounded-full ${isHigh ? 'bg-emerald-600' : isMed ? 'bg-amber-600' : 'bg-rose-600'}`}></span>
-      <span>{level} Evidence Support</span>
-      {score !== undefined && <span className="opacity-80 font-mono">({Math.round(score * 100)}%)</span>}
-    </span>
-  );
-}
-
 export function MessageBubble({ message, onSuggestedQuery }: Props) {
   const [citationsOpen, setCitationsOpen] = useState(true);
   const [absOpen, setAbsOpen] = useState(true);
@@ -71,14 +52,10 @@ export function MessageBubble({ message, onSuggestedQuery }: Props) {
 
   if (isUser) {
     return (
-      <div className="flex justify-end animate-slide-in">
-        <div className="max-w-[85%] bg-gradient-to-r from-ayush-950 to-slate-900 text-white rounded-2xl rounded-tr-xs px-5 py-3.5 shadow-md border border-ayush-800/40">
-          <div className="text-[10px] uppercase font-bold text-amber-400 tracking-wider mb-1 flex items-center gap-1.5">
-            <Scale size={12} />
-            Inquirer Docket
-          </div>
-          <p className="text-sm font-sans leading-relaxed text-slate-100">{message.content}</p>
-          <div className="text-[10px] text-slate-400 text-right mt-1.5">
+      <div className="flex justify-end">
+        <div className="max-w-[80%] bg-slate-900 dark:bg-slate-700 text-white rounded-2xl rounded-tr-sm px-4 py-3">
+          <p className="text-sm leading-relaxed">{message.content}</p>
+          <div className="text-[10px] text-slate-400 text-right mt-1">
             {message.timestamp ? new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
           </div>
         </div>
@@ -88,13 +65,13 @@ export function MessageBubble({ message, onSuggestedQuery }: Props) {
 
   if (message.error) {
     return (
-      <div className="flex justify-start animate-slide-in">
-        <div className="max-w-[90%] card border-l-4 border-l-rose-500 p-4">
-          <div className="flex items-start gap-3 text-rose-700 dark:text-rose-400">
-            <AlertTriangle size={20} className="flex-shrink-0 mt-0.5" />
+      <div className="flex justify-start">
+        <div className="max-w-[90%] border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/30 rounded-xl p-4">
+          <div className="flex items-start gap-2 text-red-700 dark:text-red-400">
+            <AlertTriangle size={16} className="flex-shrink-0 mt-0.5" />
             <div>
-              <h4 className="text-sm font-bold">Advisory Processing Notice</h4>
-              <p className="text-xs mt-1 text-slate-700 dark:text-slate-300">{message.content}</p>
+              <p className="text-sm font-medium">Something went wrong</p>
+              <p className="text-xs mt-1 text-slate-600 dark:text-slate-400">{message.content}</p>
             </div>
           </div>
         </div>
@@ -112,78 +89,68 @@ export function MessageBubble({ message, onSuggestedQuery }: Props) {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const escalateSubject = encodeURIComponent('[AIIA IP Desk] Formal Legal Advisory Request: ' + message.content.slice(0, 60));
+  const escalateSubject = encodeURIComponent('[AIIA IP Desk] Advisory Request: ' + message.content.slice(0, 60));
   const escalateBody = encodeURIComponent(
-    `Case Classification:\nCategory: ${classificationState.productCategory}\nIP Domain: ${classificationState.ipType}\nJurisdiction: ${classificationState.jurisdiction}\n\nUser Inquiry & Advisory Summary:\n${message.content}\n\nGenerated via IP-SAKTI Sahayak (Ministry of Ayush / AIIA).`
+    `Category: ${classificationState.productCategory}\nIP Domain: ${classificationState.ipType}\nJurisdiction: ${classificationState.jurisdiction}\n\n${message.content}\n\n— Sent via IP-SAKTI Sahayak (Ministry of Ayush / AIIA)`
   );
 
   return (
-    <div className="flex justify-start animate-slide-in w-full">
-      <div className="w-full space-y-3">
-        {/* Main Advisory Briefing Card */}
-        <div className="institutional-card overflow-hidden border-t-3 border-t-ayush-800">
-          {/* Official Advisory Header Strip */}
-          <div className="bg-slate-50 dark:bg-slate-900/90 border-b border-slate-200/80 dark:border-slate-800 px-5 py-3 flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-md bg-ayush-900 text-amber-400 flex items-center justify-center text-xs font-serif font-black">
-                ⚖
-              </div>
-              <div>
-                <span className="text-xs font-serif font-bold text-slate-900 dark:text-white">
-                  Statutory Advisory Findings
-                </span>
-                <span className="text-[10px] text-slate-500 ml-2 font-mono">
-                  REF-AYUSH-{message.id.slice(-6).toUpperCase()}
-                </span>
-              </div>
-            </div>
+    <div className="flex justify-start w-full">
+      <div className="w-full space-y-2">
 
-            <div className="flex items-center gap-2">
+        {/* Main answer */}
+        <div className="border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 overflow-hidden">
+          {/* Header */}
+          <div className="px-4 py-2.5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+            <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+              <span>⚖️</span>
+              <span>IP-SAKTI Sahayak</span>
               {message.confidence && (
-                <ConfidenceBadge level={message.confidence} score={message.confidenceScore} />
+                <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${
+                  message.confidence === 'High'
+                    ? 'bg-green-50 dark:bg-green-950/40 text-green-700 dark:text-green-400'
+                    : message.confidence === 'Medium'
+                    ? 'bg-yellow-50 dark:bg-yellow-950/40 text-yellow-700 dark:text-yellow-400'
+                    : 'bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-400'
+                }`}>
+                  {message.confidence} confidence
+                </span>
               )}
-              <button
-                onClick={handleCopy}
-                className="p-1.5 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 rounded hover:bg-slate-200/60 dark:hover:bg-slate-800 transition-colors"
-                title="Copy Full Advisory Text"
-              >
-                {copied ? <Check size={14} className="text-emerald-600" /> : <Copy size={14} />}
-              </button>
             </div>
+            <button
+              onClick={handleCopy}
+              className="p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded transition-colors"
+              title="Copy"
+            >
+              {copied ? <Check size={13} className="text-green-600" /> : <Copy size={13} />}
+            </button>
           </div>
 
-          {/* Abstention notice if applicable */}
+          {/* Out-of-scope notice */}
           {message.isAbstention && (
-            <div className="mx-5 mt-4 p-3.5 rounded-lg bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800 flex items-start gap-3 text-xs text-amber-800 dark:text-amber-300">
-              <AlertTriangle size={16} className="flex-shrink-0 mt-0.5 text-amber-600" />
-              <div>
-                <span className="font-bold">Corpus Boundary Notice:</span> This specific inquiry falls outside the indexed statutory corpus. Official registry consultation is required.
-              </div>
+            <div className="mx-4 mt-3 p-3 rounded-lg bg-yellow-50 dark:bg-yellow-950/30 border border-yellow-200 dark:border-yellow-800 flex items-start gap-2 text-xs text-yellow-800 dark:text-yellow-300">
+              <AlertTriangle size={14} className="flex-shrink-0 mt-0.5" />
+              <span>This query is outside the indexed statutory corpus. Please consult an official registry.</span>
             </div>
           )}
 
-          {/* Main Legal Opinion Body */}
-          <div className="p-5 md:p-6 prose prose-slate dark:prose-invert max-w-none text-slate-800 dark:text-slate-200 text-sm leading-relaxed font-sans">
+          {/* Answer body */}
+          <div className="px-4 py-4 prose prose-slate dark:prose-invert max-w-none text-sm leading-relaxed">
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
               components={{
                 h2: ({ children }) => (
-                  <h2 className="font-serif text-lg font-bold text-slate-900 dark:text-white mt-4 mb-2 pb-1 border-b border-slate-200 dark:border-slate-800 flex items-center gap-2">
+                  <h2 className="text-base font-semibold text-slate-900 dark:text-white mt-5 mb-2 pb-1 border-b border-slate-100 dark:border-slate-800">
                     {children}
                   </h2>
                 ),
                 h3: ({ children }) => (
-                  <h3 className="font-serif text-sm font-bold text-ayush-900 dark:text-emerald-400 mt-4 mb-1.5">
+                  <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200 mt-3 mb-1">
                     {children}
                   </h3>
                 ),
-                strong: ({ children }) => (
-                  <strong className="font-semibold text-slate-900 dark:text-white">
-                    {children}
-                  </strong>
-                ),
                 blockquote: ({ children }) => (
-                  <blockquote className="border-l-3 border-ayush-700 bg-parchment-50 dark:bg-slate-800/60 pl-3.5 py-1.5 my-2.5 rounded-r-md text-xs italic text-slate-700 dark:text-slate-300">
+                  <blockquote className="border-l-2 border-slate-300 dark:border-slate-600 pl-3 py-0.5 my-2 text-xs italic text-slate-600 dark:text-slate-400">
                     {children}
                   </blockquote>
                 ),
@@ -192,7 +159,7 @@ export function MessageBubble({ message, onSuggestedQuery }: Props) {
                     href={href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-ayush-700 dark:text-emerald-400 font-medium underline underline-offset-2 hover:text-ayush-900"
+                    className="text-blue-600 dark:text-blue-400 underline underline-offset-2 hover:text-blue-800"
                   >
                     {children}
                   </a>
@@ -203,98 +170,76 @@ export function MessageBubble({ message, onSuggestedQuery }: Props) {
             </ReactMarkdown>
           </div>
 
-          {/* Footer Bar: Timestamp & Human Facilitator Escalation */}
-          <div className="bg-slate-50/70 dark:bg-slate-900/60 px-5 py-3 border-t border-slate-200/80 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs">
-            <div className="flex items-center gap-3 text-slate-400 text-[11px]">
-              <span className="flex items-center gap-1 font-mono">
-                <ShieldCheck size={12} className="text-emerald-500" />
-                Deterministic Verification Complete
-              </span>
-              <span>·</span>
-              <span>
-                {message.timestamp ? new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
-              </span>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <a
-                href={`mailto:ip-facilitator@aiia.res.in?subject=${escalateSubject}&body=${escalateBody}`}
-                className="btn-secondary flex items-center gap-1.5 py-1.5 text-ayush-900 dark:text-emerald-400 border-ayush-300/80 dark:border-ayush-800/80 hover:bg-ayush-50"
-              >
-                <Mail size={13} />
-                <span>Escalate to Human IP Facilitator</span>
-              </a>
-            </div>
+          {/* Footer */}
+          <div className="px-4 py-2.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-400">
+            <span>
+              {message.timestamp ? new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
+            </span>
+            <a
+              href={`mailto:ip-facilitator@aiia.res.in?subject=${escalateSubject}&body=${escalateBody}`}
+              className="flex items-center gap-1 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors"
+            >
+              <Mail size={12} />
+              <span>Escalate to IP facilitator</span>
+            </a>
           </div>
         </div>
 
-        {/* Collapsible Section 1: Primary Statutory Authorities Cited */}
+        {/* Citations */}
         {hasCitations && (
-          <div className="institutional-card overflow-hidden">
+          <div className="border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 overflow-hidden">
             <button
               onClick={() => setCitationsOpen(!citationsOpen)}
-              className="w-full px-5 py-3 bg-slate-50 dark:bg-slate-900 flex items-center justify-between text-left hover:bg-slate-100/80 dark:hover:bg-slate-800/80 transition-colors"
+              className="w-full px-4 py-2.5 flex items-center justify-between text-left hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
             >
-              <div className="flex items-center gap-2">
-                <FileCheck2 size={16} className="text-ayush-800 dark:text-emerald-400" />
-                <span className="font-serif font-bold text-xs text-slate-900 dark:text-white">
-                  Primary Statutory Authorities Verified ({message.citations!.length})
-                </span>
-                <span className="text-[10px] text-slate-400 hidden sm:inline">
-                  (IndiaCode · IP India · Official Gazette)
-                </span>
+              <div className="flex items-center gap-2 text-xs font-medium text-slate-700 dark:text-slate-300">
+                <FileText size={14} className="text-slate-400" />
+                <span>Statutory sources ({message.citations!.length})</span>
               </div>
-              {citationsOpen ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
+              {citationsOpen ? <ChevronUp size={14} className="text-slate-400" /> : <ChevronDown size={14} className="text-slate-400" />}
             </button>
 
             {citationsOpen && (
-              <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-3 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+              <div className="border-t border-slate-100 dark:border-slate-800 p-3 grid grid-cols-1 md:grid-cols-2 gap-2">
                 {message.citations!.map((chunk) => (
-                  <div key={chunk.id} className="citation-card p-3 space-y-1.5">
+                  <div key={chunk.id} className="border border-slate-200 dark:border-slate-700 rounded-lg p-3 text-xs space-y-1">
                     <div className="flex items-start justify-between gap-2">
-                      <div className="font-bold text-xs text-slate-900 dark:text-slate-100">
-                        {chunk.title}
-                      </div>
+                      <span className="font-medium text-slate-800 dark:text-slate-200 leading-snug">{chunk.title}</span>
                       <a
                         href={chunk.source_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-ayush-700 hover:text-ayush-900 dark:text-emerald-400 flex-shrink-0"
-                        title="View Official Statute Source"
+                        className="text-slate-400 hover:text-blue-600 flex-shrink-0"
                       >
-                        <ExternalLink size={13} />
+                        <ExternalLink size={12} />
                       </a>
                     </div>
-                    <div className="text-[11px] text-slate-600 dark:text-slate-300 font-serif">
+                    <div className="text-slate-500 dark:text-slate-400">
                       {chunk.act_or_treaty} · {chunk.section_or_article}
                     </div>
-                    <div className="flex items-center gap-2 pt-1 text-[10px]">
-                      <span className="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-2 py-0.5 rounded font-mono uppercase font-semibold">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-1.5 py-0.5 rounded font-mono uppercase text-[10px]">
                         {chunk.jurisdiction}
                       </span>
-                      <span className="bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 px-2 py-0.5 rounded font-semibold">
+                      <span className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-1.5 py-0.5 rounded text-[10px]">
                         {chunk.ip_type}
                       </span>
                       {chunk.score !== undefined && (
-                        <span className="text-slate-400 font-mono">
-                          BM25: {Math.round(chunk.score)}
-                        </span>
+                        <span className="text-slate-400 font-mono text-[10px]">score: {Math.round(chunk.score)}</span>
                       )}
                       {getExplanation(chunk.section_or_article) && (
                         <button
                           type="button"
                           onClick={() => setActiveTooltip(activeTooltip === chunk.id ? null : chunk.id)}
-                          className="ml-auto text-ayush-800 dark:text-emerald-400 hover:underline flex items-center gap-0.5 font-semibold"
-                          title="Statutory Explanation"
+                          className="text-blue-600 dark:text-blue-400 hover:underline text-[10px]"
                         >
-                          <HelpCircle size={11} />
-                          <span>Explain</span>
+                          explain
                         </button>
                       )}
                     </div>
                     {activeTooltip === chunk.id && getExplanation(chunk.section_or_article) && (
-                      <div className="mt-2 p-2.5 rounded-lg bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-[11px] text-amber-900 dark:text-amber-200 leading-relaxed animate-fade-in">
-                        <strong>Statutory Context:</strong> {getExplanation(chunk.section_or_article)}
+                      <div className="mt-1 p-2 rounded bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[11px] text-slate-700 dark:text-slate-300 leading-relaxed">
+                        {getExplanation(chunk.section_or_article)}
                       </div>
                     )}
                   </div>
@@ -304,30 +249,25 @@ export function MessageBubble({ message, onSuggestedQuery }: Props) {
           </div>
         )}
 
-        {/* Collapsible Section 2: ABS Compliance Mandate */}
+        {/* ABS Checklist */}
         {hasABS && (
-          <div className="institutional-card overflow-hidden border-l-3 border-l-emerald-600">
+          <div className="border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 overflow-hidden">
             <button
               onClick={() => setAbsOpen(!absOpen)}
-              className="w-full px-5 py-3 bg-emerald-50/50 dark:bg-emerald-950/20 flex items-center justify-between text-left hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition-colors"
+              className="w-full px-4 py-2.5 flex items-center justify-between text-left hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
             >
-              <div className="flex items-center gap-2">
-                <CheckCircle2 size={16} className="text-emerald-700 dark:text-emerald-400" />
-                <span className="font-serif font-bold text-xs text-emerald-900 dark:text-emerald-300">
-                  Access & Benefit Sharing (ABS) Compliance Protocol
-                </span>
-                <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-mono">
-                  Biological Diversity Act 2023
-                </span>
+              <div className="flex items-center gap-2 text-xs font-medium text-slate-700 dark:text-slate-300">
+                <CheckCircle2 size={14} className="text-green-500" />
+                <span>ABS compliance steps</span>
               </div>
-              {absOpen ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
+              {absOpen ? <ChevronUp size={14} className="text-slate-400" /> : <ChevronDown size={14} className="text-slate-400" />}
             </button>
 
             {absOpen && (
-              <div className="p-4 space-y-2 border-t border-emerald-200/60 dark:border-emerald-900/60 bg-white dark:bg-slate-900">
+              <div className="border-t border-slate-100 dark:border-slate-800 p-3 space-y-1.5">
                 {message.absChecklist!.map((item, i) => (
-                  <div key={i} className="flex items-start gap-2.5 text-xs text-slate-700 dark:text-slate-300 p-2 rounded-lg bg-emerald-50/30 dark:bg-emerald-950/10">
-                    <span className="w-5 h-5 rounded-full bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-300 flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">
+                  <div key={i} className="flex items-start gap-2.5 text-xs text-slate-700 dark:text-slate-300">
+                    <span className="w-4 h-4 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 flex items-center justify-center text-[10px] font-medium flex-shrink-0 mt-0.5">
                       {i + 1}
                     </span>
                     <span className="leading-relaxed">{item}</span>
@@ -338,26 +278,24 @@ export function MessageBubble({ message, onSuggestedQuery }: Props) {
           </div>
         )}
 
-        {/* Collapsible Section 3: TKDL Prior Art Verification */}
+        {/* TKDL Pointers */}
         {hasTKDL && (
-          <div className="institutional-card overflow-hidden">
+          <div className="border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 overflow-hidden">
             <button
               onClick={() => setTkdlOpen(!tkdlOpen)}
-              className="w-full px-5 py-3 bg-slate-50 dark:bg-slate-900 flex items-center justify-between text-left hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              className="w-full px-4 py-2.5 flex items-center justify-between text-left hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
             >
-              <div className="flex items-center gap-2">
-                <Building2 size={16} className="text-amber-600" />
-                <span className="font-serif font-bold text-xs text-slate-900 dark:text-white">
-                  Traditional Knowledge Digital Library (TKDL) Prior-Art Checkpoints
-                </span>
+              <div className="flex items-center gap-2 text-xs font-medium text-slate-700 dark:text-slate-300">
+                <Building2 size={14} className="text-slate-400" />
+                <span>TKDL prior-art checkpoints</span>
               </div>
-              {tkdlOpen ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
+              {tkdlOpen ? <ChevronUp size={14} className="text-slate-400" /> : <ChevronDown size={14} className="text-slate-400" />}
             </button>
 
             {tkdlOpen && (
-              <div className="p-4 space-y-2 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs text-slate-700 dark:text-slate-300">
+              <div className="border-t border-slate-100 dark:border-slate-800 p-3 space-y-1.5">
                 {message.tkdlPointers!.map((pointer, i) => (
-                  <div key={i} className="p-2 rounded-md bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60 leading-relaxed">
+                  <div key={i} className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed p-2 rounded bg-slate-50 dark:bg-slate-800">
                     {pointer}
                   </div>
                 ))}
@@ -366,29 +304,27 @@ export function MessageBubble({ message, onSuggestedQuery }: Props) {
           </div>
         )}
 
-        {/* Section 4: Query Reformulation & Next Legal Steps */}
+        {/* Related questions */}
         {!message.isAbstention && onSuggestedQuery && (
           <div className="pt-1">
-            <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">
-              <Sparkles size={12} className="text-amber-500" />
-              <span>Related Legal Inquiries (Next Inquirer Steps):</span>
-            </div>
-            <div className="flex flex-wrap gap-2">
+            <div className="text-[11px] text-slate-400 mb-1.5">Related questions:</div>
+            <div className="flex flex-wrap gap-1.5">
               {getReformulations(classificationState).map((item) => (
                 <button
                   key={item.label}
                   type="button"
                   onClick={() => onSuggestedQuery(item.query)}
-                  className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-ayush-600 dark:hover:border-ayush-500 hover:bg-ayush-50/50 dark:hover:bg-ayush-950/40 text-slate-700 dark:text-slate-300 text-xs font-medium flex items-center gap-1.5 transition-all shadow-xs group"
+                  className="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs flex items-center gap-1 transition-colors"
                 >
                   <span>{item.icon}</span>
-                  <span className="group-hover:text-ayush-900 dark:group-hover:text-emerald-300 font-semibold">{item.label}</span>
-                  <ArrowRight size={11} className="text-slate-400 group-hover:translate-x-0.5 transition-transform" />
+                  <span>{item.label}</span>
+                  <ArrowRight size={10} className="text-slate-400" />
                 </button>
               ))}
             </div>
           </div>
         )}
+
       </div>
     </div>
   );
