@@ -47,7 +47,7 @@ export function EvalDashboard() {
           <div>
             <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-ayush-100/80 dark:bg-ayush-950 text-ayush-900 dark:text-emerald-300 text-[11px] font-bold tracking-wider uppercase border border-ayush-300/60 dark:border-ayush-800 mb-2">
               <BarChart3 size={13} />
-              <span>NLP Project Technical Report Dashboard · SIH26045</span>
+              <span>NLP Project Technical Report Dashboard</span>
             </div>
             <h1 className="font-serif text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">
               Deterministic RAG Evaluation &amp; Benchmark Metrics

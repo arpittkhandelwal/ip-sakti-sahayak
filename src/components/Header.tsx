@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Moon, Sun, Menu, Globe, Scale, ShieldCheck, Search, GitCompare, BarChart3, ShieldAlert } from 'lucide-react';
+import { Moon, Sun, Menu, Globe, Scale, ShieldCheck, Search, GitCompare, BarChart3 } from 'lucide-react';
 import { useAppStore } from '../store/appStore';
 import { LANGUAGE_LABELS } from '../types';
 import type { Language, Jurisdiction } from '../types';
@@ -40,7 +40,6 @@ export function Header() {
     { to: '/tkdl', label: 'TKDL Search', icon: Search },
     { to: '/compare', label: 'Comparator', icon: GitCompare },
     { to: '/eval', label: 'Eval', icon: BarChart3 },
-    { to: '/privacy', label: 'Privacy', icon: ShieldAlert },
   ];
 
   return (
@@ -59,7 +58,7 @@ export function Header() {
           <span className="text-lg">⚖️</span>
           <div>
             <span className="font-semibold text-sm text-slate-900 dark:text-white">IP-SAKTI Sahayak</span>
-            <span className="ml-2 text-[10px] text-slate-400 dark:text-slate-500 hidden sm:inline">SIH26045 · Ministry of Ayush</span>
+            <span className="ml-2 text-[10px] text-slate-400 dark:text-slate-500 hidden sm:inline">Ministry of Ayush</span>
           </div>
         </NavLink>
 

@@ -179,7 +179,7 @@ export function ABSWizard() {
 </head>
 <body>
 <h1>IP-SAKTI Sahayak — ABS Compliance Dossier</h1>
-<p style="font-size:12px;color:#666;">Generated: ${new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })} | SIH26045 | AIIA / Ministry of Ayush</p>
+<p style="font-size:12px;color:#666;">Generated: ${new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })} | AIIA / Ministry of Ayush</p>
 
 <h2>Entity Profile</h2>
 <table>

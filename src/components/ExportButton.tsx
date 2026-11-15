@@ -73,8 +73,8 @@ export function ExportButton({ messages, classificationState, jurisdiction }: Pr
 <body>
   <div class="header">
     <div class="title">IP-SAKTI Sahayak — Statutory Advisory Dossier</div>
-    <div class="subtitle">Autonomous Intellectual Property & Regulatory Legal Intelligence · Ministry of Ayush / AIIA (SIH26045)</div>
-    <div class="subtitle">Case Record Date: ${now} · Reference ID: AYUSH-DOCKET-${Math.random().toString(36).slice(2, 8).toUpperCase()}</div>
+    <div class="subtitle">Intellectual Property & Regulatory Legal Intelligence · Ministry of Ayush / AIIA</div>
+    <div class="subtitle">Date: ${now}</div>
   </div>
 
   <table class="meta-table">

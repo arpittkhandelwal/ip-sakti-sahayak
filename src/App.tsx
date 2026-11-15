@@ -1,7 +1,3 @@
-// ============================================================
-// IP-SAKTI Sahayak – App Root Component with Multi-Feature Router
-// ============================================================
-
 import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useAppStore } from './store/appStore';
@@ -15,7 +11,6 @@ import { ABSWizard } from './pages/ABSWizard';
 import { TKDLSearch } from './pages/TKDLSearch';
 import { DocumentComparator } from './pages/DocumentComparator';
 import { EvalDashboard } from './pages/EvalDashboard';
-import { PrivacyPage } from './pages/Privacy';
 
 function MainLayout() {
   const { isSidebarOpen } = useAppStore();
@@ -54,8 +49,6 @@ export default function App() {
             <Route path="/tkdl" element={<div className="flex-1 overflow-y-auto"><TKDLSearch /></div>} />
             <Route path="/compare" element={<div className="flex-1 overflow-y-auto"><DocumentComparator /></div>} />
             <Route path="/eval" element={<div className="flex-1 overflow-y-auto"><EvalDashboard /></div>} />
-            <Route path="/privacy" element={<div className="flex-1 overflow-y-auto"><PrivacyPage /></div>} />
-            {/* Fallback to home */}
             <Route path="*" element={<MainLayout />} />
           </Routes>
         </div>
