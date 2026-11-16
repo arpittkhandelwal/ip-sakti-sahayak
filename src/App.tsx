@@ -5,7 +5,6 @@ import { Header } from './components/Header';
 import { ChatPanel } from './components/ChatPanel';
 import { ClassifierSidebar } from './components/ClassifierSidebar';
 import { DisclaimerFooter } from './components/DisclaimerFooter';
-import { SampleCorpusBanner } from './components/SampleCorpusBanner';
 
 import { ABSWizard } from './pages/ABSWizard';
 import { TKDLSearch } from './pages/TKDLSearch';
@@ -40,7 +39,6 @@ export default function App() {
     <BrowserRouter>
       <div className="flex flex-col h-screen bg-slate-50 dark:bg-slate-950 overflow-hidden font-sans">
         <Header />
-        <SampleCorpusBanner />
 
         <div className="flex-1 overflow-y-auto flex flex-col">
           <Routes>
